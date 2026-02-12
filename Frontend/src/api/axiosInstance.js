@@ -1,5 +1,5 @@
 import axios from "axios";
-import AuthService from "../services/authService";
+import AuthService from "../services/auth/authService";
 
 const axiosInstance = axios.create({
     baseURL: "http://localhost:8080",
@@ -14,6 +14,10 @@ axiosInstance.interceptors.request.use(
         const token = AuthService.getToken();
 
         if (token) {
+            if(AuthService.isTokenExpired(token)){
+                AuthService.logout();
+                return Promise.reject("Token expired");
+            }
             config.headers.Authorization = `Bearer ${token}`;
         }
 

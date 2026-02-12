@@ -1,26 +1,163 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+// import { BrowserRouter, Routes, Route } from "react-router-dom";
+// import Login from "./pages/Login";
+// import ProtectedRoute from "./routes/ProtectedRoute";
+// import MainLayout from "./layouts/MainLayout";
+// import Dashboard from "./pages/common/Dashboard";
+// import MyTravels from "./pages/employee/MyTravels";
+// import TravelDetails from "./pages/employee/TravelDetails";
+// import TeamTravels from "./pages/manager/TeamTravels";
+// import TravelManagement from "./pages/hr/TravelManagement";
+// import CreateTravel from "./pages/hr/CreateTravel";
+// import HRTravelDetails from "./pages/hr/HRTravelDetails";
+// function App() {
+//   return (
+//     <BrowserRouter>
+//       <Routes>
+//         <Route path="/login" element={<Login />} />
+        
+//         <Route path="/" element={<ProtectedRoute/>}>
+//           <Route element={<MainLayout/>}>
+            
+//               <Route index element={<Dashboard />} />
+
+//               {/* EMPLOYEE */}
+//               <Route path="travels" element={<MyTravels />} />
+//               <Route path="travels/:id" element={<TravelDetails />} />
+
+//               {/* MANAGER */}
+//               <Route path="team-travels" element={<TeamTravels />} />
+
+//               {/* HR */}
+//               <Route path="hr/travels" element={<TravelManagement />} />
+//               <Route path="hr/travels/new" element={<CreateTravel />} />
+//               <Route path="hr/travels/:id" element={<HRTravelDetails />} />
+            
+//           </Route>
+//         </Route>
+//       </Routes>
+//     </BrowserRouter>
+//   );
+// }
+
+// export default App;
+
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+
 import Login from "./pages/Login";
+import Dashboard from "./pages/common/Dashboard";
+
+import MyTravels from "./pages/employee/MyTravels";
+import TravelDetails from "./pages/employee/TravelDetails";
+
+import TeamTravels from "./pages/manager/TeamTravels";
+
+import TravelManagement from "./pages/hr/TravelManagement";
+import CreateTravel from "./pages/hr/CreateTravel";
+import HRTravelDetails from "./pages/hr/HRTravelDetails";
+
+import MainLayout from "./layouts/MainLayout";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import AuthService from "./services/auth/authService";
 
 function App() {
+
+  const isLoggedIn = AuthService.isAuthenticated();
+
   return (
-    <BrowserRouter>
+    <Router>
       <Routes>
-        <Route 
-        path="/login" 
-        element={<Login />} 
+
+        <Route
+          path="/"
+          element={
+            isLoggedIn
+              ? <Navigate to="/dashboard" replace />
+              : <Navigate to="/login" replace />
+          }
         />
-        
-        <Route 
-        path="/" 
-        element={
-          <ProtectedRoute>
-            <h1>HRMS Dashboard</h1>
-          </ProtectedRoute>
-        } 
+
+        <Route path="/login" element={<Login />} />
+
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <Dashboard />
+              </MainLayout>
+            </ProtectedRoute>
+          }
         />
+
+        <Route
+          path="/travels"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <MyTravels />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/travels/:id"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <TravelDetails />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route 
+          path="/team-travels"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <TeamTravels/>
+              </MainLayout>
+            </ProtectedRoute>
+          }/>
+
+        <Route
+          path="/hr/travels"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <TravelManagement />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/hr/travels/new"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <CreateTravel />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/hr/travels/:id"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <HRTravelDetails />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route path="*" element={<Navigate to="/" replace />} />
+
       </Routes>
-    </BrowserRouter>
+    </Router>
   );
 }
 

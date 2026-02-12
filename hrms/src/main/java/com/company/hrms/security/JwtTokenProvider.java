@@ -14,9 +14,9 @@ public class JwtTokenProvider {
 
     private final Key signingKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
-    public String generateToken(String username) {
+    public String generateToken(String email) {
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(email)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION))
                 .signWith(signingKey)

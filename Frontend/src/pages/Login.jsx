@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AuthService from "../services/authService";
+import AuthService from "../services/auth/authService";
+
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -13,10 +14,8 @@ const Login = () => {
     setError("");
     
     try {
-      const res = await AuthService.login(email, password);
-      localStorage.setItem("token", res.token);
-      localStorage.setItem("role", res.role);
-      navigate("/");
+      await AuthService.login(email, password);
+      navigate("/dashboard");
     } catch (err) {
       setError("Invalid email or password");
     }
@@ -39,6 +38,7 @@ const Login = () => {
           <input
             type="email"
             placeholder="Email"
+            value={email}
             className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -47,6 +47,7 @@ const Login = () => {
           <input
             type="password"
             placeholder="Password"
+            value={password}
             className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             onChange={(e) => setPassword(e.target.value)}
             required
