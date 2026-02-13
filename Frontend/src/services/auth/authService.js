@@ -9,6 +9,9 @@ class AuthService {
         localStorage.setItem("token", token);
         localStorage.setItem("role", role);
 
+        const decoded = jwtDecode(token);
+        localStorage.setItem("employeeId", decoded.employeeId || "");
+
         return response.data;
     }
 

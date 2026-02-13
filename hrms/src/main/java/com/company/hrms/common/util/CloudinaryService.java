@@ -17,10 +17,10 @@ public class CloudinaryService {
         this.cloudinary=cloudinary;
     }
 
-    public String uploadFile(MultipartFile file, Integer travelId, Integer employeeId) {
+    public String uploadTravelDocument(MultipartFile file, Integer travelId, Integer employeeId) {
         try {
             Map<String, Object> options = new HashMap<>();
-            options.put("folder", "hrms/travel/" + travelId + "/" + employeeId);
+            options.put("folder", "hrms/travels/" + travelId + "/" + employeeId);
             options.put("resource_type", "auto");
 
             Map uploadResult = cloudinary.uploader().upload(file.getBytes(), options);
@@ -28,7 +28,23 @@ public class CloudinaryService {
             return uploadResult.get("secure_url").toString();
 
         } catch (Exception e) {
-            throw new RuntimeException("File upload failed: " + e.getMessage());
+            throw new RuntimeException("Travel document upload failed: " + e.getMessage());
+        }
+    }
+
+
+    public String uploadExpenseProof(MultipartFile file, Integer travelId, Integer employeeId) {
+        try {
+            Map<String, Object> options = new HashMap<>();
+            options.put("folder", "hrms/expenses/" + travelId + "/" + employeeId);
+            options.put("resource_type", "auto");
+
+            Map uploadResult = cloudinary.uploader().upload(file.getBytes(), options);
+
+            return uploadResult.get("secure_url").toString();
+
+        } catch (Exception e) {
+            throw new RuntimeException("Expense proof upload failed: " + e.getMessage());
         }
     }
 }

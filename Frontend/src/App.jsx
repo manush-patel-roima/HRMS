@@ -43,7 +43,7 @@
 
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
-import Login from "./pages/Login";
+import Login from "./pages/auth/Login";
 import Dashboard from "./pages/common/Dashboard";
 
 import MyTravels from "./pages/employee/MyTravels";
@@ -54,6 +54,15 @@ import TeamTravels from "./pages/manager/TeamTravels";
 import TravelManagement from "./pages/hr/TravelManagement";
 import CreateTravel from "./pages/hr/CreateTravel";
 import HRTravelDetails from "./pages/hr/HRTravelDetails";
+
+import AddExpense from "./pages/employee/AddExpense";
+import ExpenseDetails from "./pages/employee/ExpenseDetails";
+import MyExpenses from "./pages/employee/MyExpenses";
+
+import TeamExpenses from "./pages/manager/TeamExpenses";
+
+import ExpenseApprovals from "./pages/hr/ExpenseApprovals";
+import ExpenseDetail from "./pages/hr/ExpenseDetail"
 
 import MainLayout from "./layouts/MainLayout";
 import ProtectedRoute from "./routes/ProtectedRoute";
@@ -88,6 +97,9 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+
+        {/* {Travel Routes} */}
 
         <Route
           path="/travels"
@@ -149,6 +161,75 @@ function App() {
             <ProtectedRoute>
               <MainLayout>
                 <HRTravelDetails />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+
+        {/* {Expense Routes} */}
+
+        <Route
+          path="/expenses"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <MyExpenses />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/expenses/new"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <AddExpense />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/expenses/:id"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <ExpenseDetails />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/team-expenses"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <TeamExpenses />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/hr/expenses"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <ExpenseApprovals />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/hr/expenses/:id"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <ExpenseDetail />
               </MainLayout>
             </ProtectedRoute>
           }

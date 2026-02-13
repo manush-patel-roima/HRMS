@@ -12,7 +12,7 @@ public class NotificationSocketService {
         this.messagingTemplate=messagingTemplate;
     }
 
-    public void sendTravelNotification(Integer employeeId, String message){
+    public void sendNotification(Integer employeeId, String message){
         messagingTemplate.convertAndSend(
                 "/topic/notifications/" + employeeId,
                 message

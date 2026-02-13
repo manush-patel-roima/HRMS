@@ -42,7 +42,7 @@ public class AuthService {
                 .orElseThrow(() -> new UnauthorizedException("Invalid email or password"));
 
 
-        String token = jwtTokenProvider.generateToken(employee.getEmail());
+        String token = jwtTokenProvider.generateToken(employee);
 
         return new LoginResponse(token, employee.getRole().getRoleName());
     }

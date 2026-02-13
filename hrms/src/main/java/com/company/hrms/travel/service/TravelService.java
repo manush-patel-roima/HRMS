@@ -92,7 +92,7 @@ public class TravelService {
 //                    savedTravel.getEndDate().toString()
 //            );
 
-            socketService.sendTravelNotification(
+            socketService.sendNotification(
                     emp.getEmployeeId(),
                     "New travel assigned: " + savedTravel.getTitle()
             );
@@ -190,9 +190,7 @@ public class TravelService {
         boolean isHR = loggedInUser.getRole().getRoleName().equals("HR");
 
 
-
-//        String fileUrl = cloudinaryService.uploadFile(file);
-        String fileUrl = cloudinaryService.uploadFile(
+        String fileUrl = cloudinaryService.uploadTravelDocument(
                 file,
                 travelId,
                 loggedInUserId
