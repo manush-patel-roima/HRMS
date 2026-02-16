@@ -17,6 +17,10 @@ class TravelService {
     });
   }
 
+  static getAllEmployeesExceptManagerAndHr(){
+    return axiosInstance.get("/api/employees");
+  }
+
 }
 
 export default TravelService;

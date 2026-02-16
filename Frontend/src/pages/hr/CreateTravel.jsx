@@ -45,8 +45,9 @@ const CreateTravel = () => {
       <input
         className="border p-2 w-full mb-4"
         placeholder="Employee IDs (comma-separated)"
-        onChange={e => setEmployeeIds(e.target.value)}
+        onChange={e => setEmployeeIds(e.target.value)} //a dropdown needs to be implemented here to select employees instead of manual input
       />
+
 
       <button
         onClick={handleSubmit}

@@ -68,6 +68,8 @@ import MainLayout from "./layouts/MainLayout";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import AuthService from "./services/auth/authService";
 
+import OrgChart from "./pages/orgchart/OrgChart";
+
 function App() {
 
   const isLoggedIn = AuthService.isAuthenticated();
@@ -234,6 +236,21 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+
+        {/* {OrgChart Routes} */}
+
+        <Route
+          path="/org-chart"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <OrgChart />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        
 
         <Route path="*" element={<Navigate to="/" replace />} />
 

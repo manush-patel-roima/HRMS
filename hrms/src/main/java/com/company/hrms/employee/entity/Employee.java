@@ -32,4 +32,6 @@ public class Employee {
     private Boolean isActive=true;
     private LocalDateTime createdAt;
 
+    private String profileImageUrl;
+
 }

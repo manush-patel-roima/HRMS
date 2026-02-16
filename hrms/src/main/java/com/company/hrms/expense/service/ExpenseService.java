@@ -399,8 +399,7 @@ public class ExpenseService {
                 .toList();
 
         List<StatusTimeline> timeline =
-                historyRepo.findByExpense_ExpenseIdOrderByChangedAtAsc(
-                                e.getExpenseId())
+                historyRepo.findByExpense_ExpenseIdOrderByChangedAtAsc(e.getExpenseId())
                         .stream()
                         .map(h -> new StatusTimeline(
                                 h.getNewStatus(),
