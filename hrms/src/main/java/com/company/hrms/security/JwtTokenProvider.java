@@ -15,10 +15,10 @@ public class JwtTokenProvider {
 
     private final Key signingKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
-    public String generateToken(Employee employee) {
+    public String generateToken(String email) {
         return Jwts.builder()
-                .setSubject(employee.getEmail())
-                .claim("employeeId", employee.getEmployeeId())
+                .setSubject(email)
+//                .claim("employeeId", employee.getEmployeeId())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION))
                 .signWith(signingKey)

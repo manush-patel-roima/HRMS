@@ -1,8 +1,6 @@
 package com.company.hrms.expense.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -10,7 +8,7 @@ import java.util.List;
 
 @Getter @Setter
 @AllArgsConstructor
-public class ExpenseResponse {
+public class ExpenseDetail {
 
     private Integer expenseId;
     private String employeeName;
@@ -21,4 +19,5 @@ public class ExpenseResponse {
     private String status;
     private String hrRemark;
     private List<String> proofs;
+    private List<StatusTimeline> timeline;
 }

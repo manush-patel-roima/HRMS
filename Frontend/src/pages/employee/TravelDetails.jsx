@@ -17,10 +17,18 @@ const TravelDetails = () => {
   }, [id]);
 
   const handleUpload = async () => {
+    const employeeId = localStorage.getItem("employeeId");
+
+    if(!employeeId){
+      alert("Invalid user session");
+      return;
+    }
+
     const formData = new FormData();
     formData.append("file", file);
     formData.append("travelId", id);
     formData.append("documentType", documentType);
+    formData.append("employeeId", employeeId);
 
     await TravelService.uploadDocument(formData);
     alert("Document uploaded successfully");

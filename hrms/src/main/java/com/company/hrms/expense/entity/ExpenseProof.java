@@ -7,7 +7,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name="ExpenseProofs")
+@Table(name = "expense_proofs")
 @Getter @Setter
 public class ExpenseProof {
 
@@ -15,13 +15,15 @@ public class ExpenseProof {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer proofId;
 
-    @ManyToOne
-    @JoinColumn(name="ExpenseId",nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "expense_id", nullable = false)
     private Expense expense;
 
+    @Column(nullable = false)
     private String fileUrl;
 
+    @Column(nullable = false)
+    private String fileType;
+
     private LocalDateTime uploadedAt = LocalDateTime.now();
-
-
 }

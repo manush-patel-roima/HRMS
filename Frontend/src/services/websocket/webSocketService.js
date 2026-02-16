@@ -3,7 +3,7 @@ import Stomp from "stompjs";
 import AuthService from "../auth/authService";
 
 let stompClient = null;
-
+let socket = null;
 class WebSocketService{
     static connect(onMessageReceived) {
 
@@ -24,10 +24,13 @@ class WebSocketService{
     };
 
 
-
     static disconnect () {
-        if(stompClient){
-            stompClient.disconnect();
+        if (stompClient && stompClient.connected) {
+            stompClient.disconnect(() => {
+            console.log("Disconnected");
+            });
+        } else if (socket && socket.readyState === WebSocket.OPEN) {
+            socket.close();
         }
     };
 

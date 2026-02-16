@@ -14,5 +14,5 @@ public class TravelResponse {
     private LocalDate startDate;
     private LocalDate endDate;
     private String createdByHR;
-    private List<String> assignedEmployees;
+    private List<EmployeeSummary> assignedEmployees;
 }

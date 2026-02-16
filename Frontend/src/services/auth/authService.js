@@ -5,12 +5,12 @@ class AuthService {
 
     static async login(email,password) {
         const response = await axiosInstance.post("/api/auth/login",{email,password});
-        const {token,role} = response.data;
+        const {token,role,employeeId} = response.data;
         localStorage.setItem("token", token);
         localStorage.setItem("role", role);
-
-        const decoded = jwtDecode(token);
-        localStorage.setItem("employeeId", decoded.employeeId || "");
+        localStorage.setItem("employeeId", employeeId);
+        // const decoded = jwtDecode(token);
+        // localStorage.setItem("employeeId", decoded.employeeId || "");
 
         return response.data;
     }

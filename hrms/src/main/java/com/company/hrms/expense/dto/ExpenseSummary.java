@@ -1,17 +1,17 @@
 package com.company.hrms.expense.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Getter @Setter
 @AllArgsConstructor
-public class ExpenseListResponse {
+public class ExpenseSummary {
 
     private Integer expenseId;
-    private String travelTitle;
+    private String category;
     private BigDecimal amount;
+    private LocalDate expenseDate;
     private String status;
 }

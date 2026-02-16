@@ -7,9 +7,7 @@ import com.company.hrms.common.util.CloudinaryService;
 import com.company.hrms.employee.entity.Employee;
 import com.company.hrms.employee.repository.EmployeeRepository;
 import com.company.hrms.notification.NotificationSocketService;
-import com.company.hrms.travel.dto.CreateTravelRequest;
-import com.company.hrms.travel.dto.TravelListResponse;
-import com.company.hrms.travel.dto.TravelResponse;
+import com.company.hrms.travel.dto.*;
 import com.company.hrms.travel.entity.TravelDocument;
 import com.company.hrms.travel.entity.TravelEmployee;
 import com.company.hrms.travel.entity.TravelPlan;
@@ -106,7 +104,10 @@ public class TravelService {
                     savedTravel.getEndDate(),
                     loggedInHR.getFullName(),
                     employees.stream()
-                            .map(Employee::getFullName)
+                            .map(emp->new EmployeeSummary(
+                                    emp.getEmployeeId(),
+                                    emp.getFullName()
+                            ))
                             .toList()
         );
     }
@@ -177,7 +178,7 @@ public class TravelService {
             MultipartFile file,
             Integer travelId,
             String documentType,
-
+            Integer employeeId,
             Integer loggedInUserId
     )
     {
@@ -187,22 +188,32 @@ public class TravelService {
         Employee loggedInUser = employeeRepo.findById(loggedInUserId)
                 .orElseThrow(()->new ResourceNotFoundException("User not found"));
 
-        boolean isHR = loggedInUser.getRole().getRoleName().equals("HR");
+        String role = loggedInUser.getRole().getRoleName();
 
+        Employee selectedEmployee;
 
+        if(role.equals("HR")){
+            if(employeeId == null){
+                throw new IllegalArgumentException("Employee must be selected");
+            }
+            selectedEmployee = employeeRepo.findById(employeeId)
+                    .orElseThrow(()-> new ResourceNotFoundException("Employee not found"));
+        }else{
+            selectedEmployee = loggedInUser;
+        }
         String fileUrl = cloudinaryService.uploadTravelDocument(
                 file,
                 travelId,
-                loggedInUserId
+                selectedEmployee.getEmployeeId()
         );
 
         TravelDocument doc = new TravelDocument();
-        doc.setOwnerType(isHR ? "HR" : "EMPLOYEE");
+        doc.setOwnerType(role.equals("HR") ? "HR" : "EMPLOYEE");
         doc.setDocumentType(documentType);
         doc.setFileName(file.getOriginalFilename());
         doc.setFileUrl(fileUrl);
         doc.setUploadedBy(loggedInUser);
-        doc.setEmployee(loggedInUser);
+        doc.setEmployee(selectedEmployee);
         doc.setTravelPlan(travel);
 
         return travelDocumentRepo.save(doc);
@@ -210,11 +221,50 @@ public class TravelService {
     }
 
 
+    public TravelResponse getTravelEmployeeDetails(Integer travelId)
+    {
 
-    public List<TravelDocument> getTravelDocuments(
-            Integer travelId,
-            Integer loggedInUserId
-    )
+        TravelPlan travel = travelPlanRepo.findById(travelId)
+                .orElseThrow(()-> new ResourceNotFoundException("Travel not found"));
+
+        List<EmployeeSummary> employees = travel.getEmployees()
+                .stream()
+                .map(te->new EmployeeSummary(
+                        te.getEmployee().getEmployeeId(),
+                        te.getEmployee().getFullName()
+                ))
+                .toList();
+
+        return new TravelResponse(
+                travel.getTravelId(),
+                travel.getTitle(),
+                travel.getStartDate(),
+                travel.getEndDate(),
+                travel.getCreatedByHR().getFullName(),
+                employees
+        );
+    }
+
+
+    public List<TravelSummary> getAssignedTravels(Integer employeeId)
+    {
+
+        List<TravelEmployee> mappings = travelEmployeeRepo.findByEmployee_EmployeeId(employeeId);
+
+        return mappings
+                .stream()
+                .map(TravelEmployee::getTravelPlan)
+                .distinct()
+                .map(tp->new TravelSummary(
+                        tp.getTravelId(),
+                        tp.getTitle()
+                ))
+                .toList();
+    }
+
+
+
+    public List<TravelDocumentUploadResponse> getTravelDocuments(Integer travelId, Integer loggedInUserId)
     {
 
         Employee loggedInUser = employeeRepo.findById(loggedInUserId)
@@ -227,7 +277,16 @@ public class TravelService {
 
 
         if (role.equals("HR")) {
-            return travelDocumentRepo.findByTravelPlan_TravelId(travelId);
+            return travelDocumentRepo.findByTravelPlan_TravelId(travelId)
+                    .stream()
+                    .map(td->new TravelDocumentUploadResponse(
+                            td.getDocumentId(),
+                            td.getFileUrl(),
+                            td.getFileName(),
+                            td.getDocumentType(),
+                            td.getOwnerType()
+                    ))
+                    .toList();
         }
 
 
@@ -238,6 +297,13 @@ public class TravelService {
                     .filter(doc ->
                             doc.getEmployee().getEmployeeId().equals(loggedInUserId)
                     )
+                    .map(td->new TravelDocumentUploadResponse(
+                            td.getDocumentId(),
+                            td.getFileUrl(),
+                            td.getFileName(),
+                            td.getDocumentType(),
+                            td.getOwnerType()
+                    ))
                     .toList();
         }
 
@@ -254,6 +320,13 @@ public class TravelService {
                 .filter(doc ->
                         teamIds.contains(doc.getEmployee().getEmployeeId())
                 )
+                .map(td->new TravelDocumentUploadResponse(
+                        td.getDocumentId(),
+                        td.getFileUrl(),
+                        td.getFileName(),
+                        td.getDocumentType(),
+                        td.getOwnerType()
+                ))
                 .toList();
     }
 }
