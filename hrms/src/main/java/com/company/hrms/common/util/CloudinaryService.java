@@ -47,4 +47,35 @@ public class CloudinaryService {
             throw new RuntimeException("Expense proof upload failed: " + e.getMessage());
         }
     }
+
+
+    public String uploadJd(MultipartFile file, String jobTitle) {
+        try {
+            Map<String, Object> options = new HashMap<>();
+            options.put("folder", "hrms/jobs/jds/" + jobTitle );
+            options.put("resource_type", "auto");
+
+            Map uploadResult = cloudinary.uploader().upload(file.getBytes(), options);
+
+            return uploadResult.get("secure_url").toString();
+
+        } catch (Exception e) {
+            throw new RuntimeException("Expense proof upload failed: " + e.getMessage());
+        }
+    }
+
+    public String uploadReferralCv(MultipartFile file, String friendName) {
+        try {
+            Map<String, Object> options = new HashMap<>();
+            options.put("folder", "hrms/jobs/referrals/" + friendName );
+            options.put("resource_type", "auto");
+
+            Map uploadResult = cloudinary.uploader().upload(file.getBytes(), options);
+
+            return uploadResult.get("secure_url").toString();
+
+        } catch (Exception e) {
+            throw new RuntimeException("Expense proof upload failed: " + e.getMessage());
+        }
+    }
 }

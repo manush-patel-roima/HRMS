@@ -64,11 +64,22 @@ import TeamExpenses from "./pages/manager/TeamExpenses";
 import ExpenseApprovals from "./pages/hr/ExpenseApprovals";
 import ExpenseDetail from "./pages/hr/ExpenseDetail"
 
+import OrgChart from "./pages/orgchart/OrgChart";
+
+import JobListings from "./pages/employee/JobListings";
+import MyReferrals from "./pages/employee/MyReferrals";
+
+import JobsManagement from "./pages/hr/JobsManagement";
+import CreateJob from "./pages/hr/CreateJob";
+import ReferralsList from "./pages/hr/ReferralsList";
+
+import ConfigManagement from "./pages/hr/ConfigManagement";
+
 import MainLayout from "./layouts/MainLayout";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import AuthService from "./services/auth/authService";
 
-import OrgChart from "./pages/orgchart/OrgChart";
+
 
 function App() {
 
@@ -250,7 +261,76 @@ function App() {
             </ProtectedRoute>
           }
         />
-        
+
+        {/* {Jobs Routes} */}
+
+        <Route
+          path="/jobs"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <JobListings/>
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/myreferrals"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <MyReferrals/>
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/hr/jobs/new"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <CreateJob/>
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/hr/jobs"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <JobsManagement/>
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />                
+
+        <Route
+          path="/hr/referralslist"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <ReferralsList/>
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />    
+
+        {/* {System Config Route} */}   
+
+        <Route
+          path="/hr/config"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <ConfigManagement/>
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />          
 
         <Route path="*" element={<Navigate to="/" replace />} />
 

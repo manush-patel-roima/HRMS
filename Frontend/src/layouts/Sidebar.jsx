@@ -9,12 +9,13 @@ const Sidebar = () => {
     { label: "Achievements", path: "/achievements" },
     { label: "Games", path: "/games" },
     { label: "Org Chart", path: "/org-chart" },
-    { label: "Jobs", path: "/jobs" }
+    
   ];
 
   const employee = [
     { label: "Travels", path: "/travels" },
-    { label: "Expenses", path: "/expenses" }
+    { label: "Expenses", path: "/expenses" },
+    { label: "Jobs", path: "/jobs" }
   ];
 
   const manager = [
@@ -26,6 +27,7 @@ const Sidebar = () => {
     { label: "Travel Management", path: "/hr/travels" },
     { label: "Expense Approvals", path: "/hr/expenses" },
     { label: "Games Config", path: "/hr/games" },
+    { label: "Jobs", path: "/hr/jobs" },
     { label: "System Config", path: "/hr/config" }
   ];
 
