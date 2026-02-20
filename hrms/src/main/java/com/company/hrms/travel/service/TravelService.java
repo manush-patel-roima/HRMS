@@ -2,7 +2,7 @@ package com.company.hrms.travel.service;
 
 import com.company.hrms.common.exception.ResourceNotFoundException;
 import com.company.hrms.common.exception.UnauthorizedException;
-//import com.company.hrms.common.service.EmailService;
+import com.company.hrms.common.service.EmailService;
 import com.company.hrms.common.util.CloudinaryService;
 import com.company.hrms.employee.entity.Employee;
 import com.company.hrms.employee.repository.EmployeeRepository;
@@ -27,7 +27,7 @@ public class TravelService {
     private final TravelEmployeeRepository travelEmployeeRepo;
     private final TravelDocumentRepository travelDocumentRepo;
     private final EmployeeRepository employeeRepo;
-//    private final EmailService emailService;
+    private final EmailService emailService;
     private final NotificationSocketService socketService;
     private final CloudinaryService cloudinaryService;
 
@@ -36,7 +36,7 @@ public class TravelService {
             TravelEmployeeRepository travelEmployeeRepo,
             TravelDocumentRepository travelDocumentRepo,
             EmployeeRepository employeeRepo,
-//            EmailService emailService,
+            EmailService emailService,
             NotificationSocketService socketService,
             CloudinaryService cloudinaryService
 
@@ -46,7 +46,7 @@ public class TravelService {
         this.travelEmployeeRepo=travelEmployeeRepo;
         this.travelDocumentRepo=travelDocumentRepo;
         this.employeeRepo=employeeRepo;
-//        this.emailService=emailService;
+        this.emailService=emailService;
         this.socketService=socketService;
         this.cloudinaryService=cloudinaryService;
     }
@@ -63,6 +63,22 @@ public class TravelService {
         {
             throw new UnauthorizedException("Only HR can create travel");
         }
+
+        if(request.getStartDate().isAfter(request.getEndDate())){
+          throw new IllegalArgumentException("Start date cannot be after end date");
+        }
+
+        List<TravelEmployee> overlappingTravels = travelEmployeeRepo.findOverlappingTravels(
+                request.getEmployeeIds(),
+                request.getStartDate(),
+                request.getEndDate()
+        );
+
+        if(!overlappingTravels.isEmpty()){
+            throw new IllegalArgumentException("One or more selected employees already have a travel during this period");
+        }
+
+
 
         TravelPlan travel = new TravelPlan();
         travel.setTitle(request.getTitle());
@@ -82,13 +98,13 @@ public class TravelService {
             travelEmployeeRepo.save(te);
 
 
-//            emailService.sendTravelAssignmentEmail(
-//                    emp.getEmail(),
-//                    emp.getFullName(),
-//                    savedTravel.getTitle(),
-//                    savedTravel.getStartDate().toString(),
-//                    savedTravel.getEndDate().toString()
-//            );
+            emailService.sendTravelAssignmentEmail(
+                    emp.getEmail(),
+                    emp.getFullName(),
+                    savedTravel.getTitle(),
+                    savedTravel.getStartDate().toString(),
+                    savedTravel.getEndDate().toString()
+            );
 
             socketService.sendNotification(
                     emp.getEmployeeId(),
@@ -221,7 +237,7 @@ public class TravelService {
     }
 
 
-    public TravelResponse getTravelEmployeeDetails(Integer travelId)
+    public TravelResponse getAssignedEmployees(Integer travelId)
     {
 
         TravelPlan travel = travelPlanRepo.findById(travelId)
@@ -284,7 +300,9 @@ public class TravelService {
                             td.getFileUrl(),
                             td.getFileName(),
                             td.getDocumentType(),
-                            td.getOwnerType()
+                            td.getOwnerType(),
+                            td.getUploadedBy().getFullName(),
+                            td.getEmployee().getFullName()
                     ))
                     .toList();
         }
@@ -302,7 +320,9 @@ public class TravelService {
                             td.getFileUrl(),
                             td.getFileName(),
                             td.getDocumentType(),
-                            td.getOwnerType()
+                            td.getOwnerType(),
+                            td.getUploadedBy().getFullName(),
+                            td.getEmployee().getFullName()
                     ))
                     .toList();
         }
@@ -325,7 +345,9 @@ public class TravelService {
                         td.getFileUrl(),
                         td.getFileName(),
                         td.getDocumentType(),
-                        td.getOwnerType()
+                        td.getOwnerType(),
+                        td.getUploadedBy().getFullName(),
+                        td.getEmployee().getFullName()
                 ))
                 .toList();
     }

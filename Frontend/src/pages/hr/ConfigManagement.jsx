@@ -94,7 +94,7 @@ const ConfigRow = ({ config, onUpdate }) => {
 
       <div className="flex gap-2">
         <input
-          className="border rounded p-1"
+          className="border-2 rounded p-1"
           value={value}
           onChange={e => setValue(e.target.value)}
         />

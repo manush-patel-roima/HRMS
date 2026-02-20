@@ -30,7 +30,7 @@ public class Employee {
     private LocalDate dateOfBirth;
     private LocalDate dateOfJoining;
     private Boolean isActive=true;
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt=LocalDateTime.now();
 
     private String profileImageUrl;
 

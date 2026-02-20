@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "../api/axiosInstance";
+import TravelService from "../services/travel/travelService";
 
 const DocumentTable = ({ travelId }) => {
   const [docs, setDocs] = useState([]);
 
   useEffect(() => {
-    axiosInstance.get(`/api/travels/${travelId}/documents`)
-    .then(res => setDocs(res.data));
+    TravelService.getTravelDocuments(travelId).then(res => setDocs(res.data));
   }, [travelId]);
 
   return (
@@ -18,6 +18,8 @@ const DocumentTable = ({ travelId }) => {
             <th>File</th>
             <th>Type</th>
             <th>Owner</th>
+            <th>Uploaded By</th>
+            <th>For Whom</th>
           </tr>
         </thead>
         <tbody>
@@ -35,6 +37,8 @@ const DocumentTable = ({ travelId }) => {
               </td>
               <td>{d.documentType}</td>
               <td>{d.ownerType}</td>
+              <td>{d.uploadedBy}</td>
+              <td>{d.selectedEmployee}</td>
             </tr>
           ))}
         </tbody>

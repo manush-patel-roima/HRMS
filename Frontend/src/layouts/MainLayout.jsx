@@ -7,7 +7,8 @@ const MainLayout = ({ children }) => {
       <Sidebar />
       <div className="flex-1 flex flex-col">
         <Navbar />
-        <main className="p-6 overflow-y-auto">{children}</main>
+        <main className="p-6 ">{children}</main>
+        {/* {removed overflow-y-auto}   */}
       </div>
     </div>
   );

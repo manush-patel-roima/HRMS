@@ -4,14 +4,13 @@ import JobService from "../../services/jobs/jobService";
 
 const CreateJob = () => {
 
-  const navigate = useNavigate();
-
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [hrEmail, setHrEmail] = useState("");
   const [reviewers, setReviewers] = useState("");
   const [jdFile, setJdFile] = useState(null);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const validateEmails = (list) => {
     const regex = /\S+@\S+\.\S+/;
@@ -68,7 +67,7 @@ const CreateJob = () => {
   return (
     <div className="bg-white p-6 rounded shadow max-w-lg">
 
-      <a href="/hr/jobs" className="text-blue-600 underline mb-6 ">Back to Jobs</a>
+      <div className="text-blue-600 underline mb-6" onClick={()=>navigate("/hr/jobs")}>Back to Jobs</div>
 
       <h2 className="text-xl font-bold mb-4">Create Job</h2>
 

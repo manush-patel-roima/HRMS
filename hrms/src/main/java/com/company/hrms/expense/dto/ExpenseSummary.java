@@ -14,4 +14,6 @@ public class ExpenseSummary {
     private BigDecimal amount;
     private LocalDate expenseDate;
     private String status;
+    private String travelName;
+    private String employeeName;
 }

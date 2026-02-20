@@ -27,7 +27,7 @@ const ExpenseApprovals = () => {
         <input
           placeholder="Employee ID"
           className="border p-2"
-          onChange={e => setFilters({ ...filters, employeeId: e.target.value })}
+          onChange={e => setFilters({ ...filters, employeeId: parseInt(e.target.value)})}
         />
 
         <input
@@ -59,15 +59,25 @@ const ExpenseApprovals = () => {
 
       
       <div className="bg-white p-4 rounded shadow">
+        <div className="flex justify-between font-semibold mb-4">
+          <span>Travel</span>
+          <span>Employee</span>
+          <span>Category</span>
+          <span>Amount</span>
+          <span>Expense Date</span>
+          <span>Status</span>
+        </div>
         {expenses.map(e => (
-          <div
-            key={e.expenseId}
-            className="border-b py-2 cursor-pointer"
-            onClick={() => navigate(`/hr/expenses/${e.expenseId}`)}
+          <div key={e.expenseId} 
+               className="border-b py-2 cursor-pointer" 
+               onClick={() => navigate(`/hr/expenses/${e.expenseId}`)}
           >
             <div className="flex justify-between">
+              <span>{e.travelName}</span>
+              <span>{e.employeeName}</span>
               <span>{e.category}</span>
               <span>₹{e.amount}</span>
+              <span>{e.expenseDate}</span>
               <span>{e.status}</span>
             </div>
           </div>

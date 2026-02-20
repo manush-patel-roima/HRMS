@@ -57,9 +57,9 @@ public class TravelController {
     }
 
     @GetMapping("/{travelId}")
-    public TravelResponse getTravelEmployeeDetails(@PathVariable Integer travelId)
+    public TravelResponse getAssignedEmployees(@PathVariable Integer travelId)
     {
-        return travelService.getTravelEmployeeDetails(travelId); // for getting assigned employees of a travel
+        return travelService.getAssignedEmployees(travelId); // for getting assigned employees of a travel
     }
 
     @PreAuthorize("hasRole('EMPLOYEE')")

@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import DocumentTable from "../../components/DocumentTable";
 import { useState, useEffect } from "react";
 import TravelService from "../../services/travel/travelService";
@@ -11,17 +11,17 @@ const HRTravelDetails = () => {
   const [documentType, setDocumentType] = useState("");
   const [employees, setEmployees] = useState([]);
   const [selectedEmployeeId, setSelectedEmployeeId] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     TravelService.getTravels().then(res => {
       const found = res.data.find(t => t.travelId === Number(id));
-      setTravel(found);
+      setTravel(found);  
     });
 
-    axiosInstance.get(`/api/travels/${id}`)
-      .then(res => {
-        setEmployees(res.data.assignedEmployees || []);
-      });
+    TravelService.getAssignedEmployees(id).then(res => {
+      setEmployees(res.data.assignedEmployees || []);
+    });
 
   }, [id]);
 
@@ -49,6 +49,9 @@ const HRTravelDetails = () => {
 
   return (
     <div>
+
+      <div className="text-blue-600 underline mb-6 cursor-pointer" onClick={()=>navigate("/hr/travels")}>Back to Travels</div>
+
       <h1 className="text-3xl font-bold mb-4">Travel Details</h1>
 
       <h2 className="text-xl font-bold mb-4">{travel.title}</h2>

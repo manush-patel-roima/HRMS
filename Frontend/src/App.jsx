@@ -50,6 +50,7 @@ import MyTravels from "./pages/employee/MyTravels";
 import TravelDetails from "./pages/employee/TravelDetails";
 
 import TeamTravels from "./pages/manager/TeamTravels";
+import TeamTravelDetails from "./pages/manager/TeamTravelDetails";
 
 import TravelManagement from "./pages/hr/TravelManagement";
 import CreateTravel from "./pages/hr/CreateTravel";
@@ -145,6 +146,17 @@ function App() {
               </MainLayout>
             </ProtectedRoute>
           }/>
+
+        <Route
+          path="/team-travels/:id"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <TeamTravelDetails />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />          
 
         <Route
           path="/hr/travels"

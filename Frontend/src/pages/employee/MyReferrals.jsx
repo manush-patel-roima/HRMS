@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import JobService from "../../services/jobs/jobService";
+import { useNavigate } from "react-router-dom";
 
 const MyReferrals = () => {
 
   const [referrals, setReferrals] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchReferrals();
@@ -26,7 +28,7 @@ const MyReferrals = () => {
   return (
     <div>
 
-      <a href="/jobs" className="text-blue-600 underline mb-6 ">Back to Jobs</a>
+      <div className="text-blue-600 underline mb-6 cursor-pointer" onClick={()=>navigate("/jobs")}>Back to Jobs</div>
 
       <h2 className="text-xl font-bold mb-4">My Referrals</h2>
 

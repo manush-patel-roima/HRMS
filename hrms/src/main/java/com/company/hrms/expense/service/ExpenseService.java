@@ -6,6 +6,7 @@ import com.company.hrms.common.exception.ValidationException;
 import com.company.hrms.common.util.CloudinaryService;
 import com.company.hrms.configdata.entity.StatusMaster;
 import com.company.hrms.configdata.repository.StatusMasterRepository;
+import com.company.hrms.configdata.service.SystemConfigService;
 import com.company.hrms.employee.entity.Employee;
 import com.company.hrms.employee.repository.EmployeeRepository;
 import com.company.hrms.expense.dto.*;
@@ -17,7 +18,7 @@ import com.company.hrms.expense.repository.ExpenseProofRepository;
 import com.company.hrms.expense.repository.ExpenseRepository;
 import com.company.hrms.expense.repository.ExpenseStatusHistoryRepository;
 import com.company.hrms.expense.repository.ExpenseValidationConfigRepository;
-//import com.company.hrms.common.service.EmailService;
+import com.company.hrms.common.service.EmailService;
 import com.company.hrms.notification.NotificationSocketService;
 import com.company.hrms.travel.entity.TravelPlan;
 import com.company.hrms.travel.repository.TravelPlanRepository;
@@ -44,7 +45,8 @@ public class ExpenseService {
     private final ExpenseStatusHistoryRepository historyRepo;
     private final ExpenseValidationConfigRepository configRepo;
     private final CloudinaryService cloudinaryService;
-//    private final EmailService emailService;
+    private final EmailService emailService;
+    private final SystemConfigService configService;
 
     public ExpenseService(
             ExpenseRepository expenseRepo,
@@ -54,8 +56,9 @@ public class ExpenseService {
             ExpenseProofRepository proofRepo,
             ExpenseStatusHistoryRepository historyRepo,
             ExpenseValidationConfigRepository configRepo,
-            CloudinaryService cloudinaryService
-//            EmailService emailService
+            CloudinaryService cloudinaryService,
+            EmailService emailService,
+            SystemConfigService configService
     )
     {
 
@@ -67,7 +70,8 @@ public class ExpenseService {
         this.historyRepo = historyRepo;
         this.configRepo = configRepo;
         this.cloudinaryService = cloudinaryService;
-//        this.emailService = emailService;
+        this.emailService = emailService;
+        this.configService=configService;
     }
 
 
@@ -93,7 +97,7 @@ public class ExpenseService {
         }
 
 
-        if (expenseDate.isBefore(travel.getStartDate()) || expenseDate.isAfter(travel.getEndDate())) {
+        if (expenseDate.isBefore(travel.getStartDate()) || expenseDate.isAfter(travel.getEndDate().plusDays(10))) {
             throw new ValidationException("Expense date must be within travel period");
         }
 
@@ -178,12 +182,14 @@ public class ExpenseService {
 
         createHistory(expense, "DRAFT", "SUBMITTED", expense.getEmployee(), null);
 
-
-//        emailService.sendEmail(
-//                "hr.expense@company.com",
-//                "New Expense Submitted",
-//                "Expense ID: " + expense.getExpenseId()
-//        );
+        String hrEmail = configService.getConfigValue("DEFAULT_HR_EMAIL");
+        emailService.sendExpenseSubmissionEmail(
+                hrEmail,
+                expense.getEmployee().getFullName(),
+                expense.getTravelPlan().getTitle(),
+                expense.getExpenseId(),
+                expense.getAmount().toString()
+        );
 
         return mapToDetailDTO(expense);
     }
@@ -383,7 +389,9 @@ public class ExpenseService {
                 e.getCategory(),
                 e.getAmount(),
                 e.getExpenseDate(),
-                e.getStatus().getStatusCode()
+                e.getStatus().getStatusCode(),
+                e.getTravelPlan().getTitle(),
+                e.getEmployee().getFullName()
         );
     }
 

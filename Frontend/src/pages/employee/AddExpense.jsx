@@ -68,8 +68,9 @@ const AddExpense = () => {
   return (
     <div className="bg-white p-6 rounded shadow max-w-lg">
 
-      <h2 className="text-xl font-bold mb-4">Add Expense</h2>
+      <div className="text-blue-600 underline mb-6 cursor-pointer" onClick={()=>navigate("/expenses")}>Back to Expenses</div>
 
+      <h2 className="text-xl font-bold mb-4">Add Expense</h2>
       
       <select
         value={travelId}

@@ -17,6 +17,18 @@ class TravelService {
     });
   }
 
+  static getTravelDocuments(travelId) {
+    return axiosInstance.get(`/api/travels/${travelId}/documents`);
+  }
+
+  static getAssignedEmployees(travelId){
+    return axiosInstance.get(`/api/travels/${travelId}`)
+  }
+
+  static getAllEmployees(){
+    return axiosInstance.get("/api/employees/all");
+  }
+
   static getAllEmployeesExceptManagerAndHr(){
     return axiosInstance.get("/api/employees");
   }

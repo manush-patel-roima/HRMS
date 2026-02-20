@@ -1,6 +1,7 @@
 package com.company.hrms.jobs.email;
 
 import org.springframework.core.io.UrlResource;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.mail.javamail.*;
 import jakarta.mail.internet.MimeMessage;
@@ -21,6 +22,7 @@ public class JobEmailService {
         this.emailLogRepo = emailLogRepo;
     }
 
+    @Async
     public void sendJobShareEmail(List<String> recipients, Job job) {
 
         for (String email : recipients) {
@@ -32,6 +34,7 @@ public class JobEmailService {
         }
     }
 
+    @Async
     public void sendReferralNotification(Referral referral,
                                          List<String> recipients) {
 
@@ -51,6 +54,7 @@ public class JobEmailService {
             emailLogRepo.save(log);
         }
     }
+
 
     private void sendEmail(String to,
                            String subject,

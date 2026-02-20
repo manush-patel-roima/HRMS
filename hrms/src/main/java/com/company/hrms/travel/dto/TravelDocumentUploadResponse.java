@@ -11,5 +11,7 @@ public class TravelDocumentUploadResponse {
     private String fileName;
     private String documentType;
     private String ownerType;
+    private String uploadedBy;
+    private String selectedEmployee;
 
 }

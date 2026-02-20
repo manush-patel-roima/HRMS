@@ -1,27 +1,56 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Select from "react-select";
 import TravelService from "../../services/travel/travelService";
 
 const CreateTravel = () => {
   const [title, setTitle] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [employeeIds, setEmployeeIds] = useState("");
+  const [employees,setEmployees] = useState([]);
+  const [selectedIds, setSelectedIds] = useState([]);
   const navigate = useNavigate();
 
+  useEffect(()=>{
+    TravelService.getAllEmployeesExceptManagerAndHr()
+     .then(res=>{
+       
+      const options = res.data.map(emp=>({
+        value: emp.employeeId,
+        label: emp.employeeName
+      }));
+
+      setEmployees(options);
+     });
+  },[]);
+
   const handleSubmit = async () => {
-    await TravelService.createTravel({
-      title,
-      startDate,
-      endDate,
-      employeeIds: employeeIds.split(",").map(Number)
-    });
-    alert("Travel created");
-    navigate("/hr/travels");
+    try {
+      if (selectedIds.length === 0) {
+        alert("Please select at least one employee");
+        return;
+      }
+
+      await TravelService.createTravel({
+        title,
+        startDate,
+        endDate,
+        employeeIds: selectedIds.map(emp=>emp.value)
+      });
+
+      alert("Travel created");
+      navigate("/hr/travels");     
+    } catch (error) {
+      console.log(error.response?.data?.message)
+    }
+    
   };
 
   return (
-    <div className="bg-white p-6 rounded shadow max-w-lg">
+    <div className="bg-white p-6 rounded shadow max-w-lg ">
+
+      <div className="text-blue-600 underline mb-6 cursor-pointer" onClick={()=>navigate("/hr/travels")}>Back to Travels</div>
+      
       <h2 className="text-xl font-bold mb-4">Create Travel</h2>
 
       <input
@@ -42,10 +71,16 @@ const CreateTravel = () => {
         onChange={e => setEndDate(e.target.value)}
       />
 
-      <input
-        className="border p-2 w-full mb-4"
-        placeholder="Employee IDs (comma-separated)"
-        onChange={e => setEmployeeIds(e.target.value)} //a dropdown needs to be implemented here to select employees instead of manual input
+      <label className="block mb-2 font-semibold">
+        Select Employees
+      </label>
+
+      <Select
+        isMulti
+        options={employees}
+        value={selectedIds}
+        onChange={setSelectedIds}
+        className="mb-4"     
       />
 
 

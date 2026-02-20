@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ExpenseService from "../../services/expense/expenseService";
 
 const ExpenseDetail = () => {
@@ -7,6 +7,7 @@ const ExpenseDetail = () => {
   const { id } = useParams();
   const [expense, setExpense] = useState(null);
   const [remark, setRemark] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     ExpenseService.getHRExpenseDetail(id)
@@ -35,7 +36,7 @@ const ExpenseDetail = () => {
   return (
     <div className="bg-white p-6 rounded shadow">
 
-      <a href="/hr/expenses" className="text-blue-600 underline mb-6 ">Back to Expenses</a>
+      <div className="text-blue-600 underline mb-6 cursor-pointer" onClick={()=>navigate("/hr/expenses")}>Back to Expenses</div>
 
       <h2 className="text-xl font-bold mb-4">Expense Detail</h2>
       

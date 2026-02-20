@@ -3,7 +3,6 @@ package com.company.hrms.jobs.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
-import com.company.hrms.jobs.entity.ReferralStatus;
 
 @Entity
 @Table(name = "referrals")

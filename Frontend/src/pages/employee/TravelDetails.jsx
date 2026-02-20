@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate,useParams } from "react-router-dom";
 import TravelService from "../../services/travel/travelService";
 import DocumentTable from "../../components/DocumentTable";
 
@@ -8,6 +8,7 @@ const TravelDetails = () => {
   const [travel, setTravel] = useState(null);
   const [file, setFile] = useState(null);
   const [documentType, setDocumentType] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     TravelService.getTravels().then(res => {
@@ -38,6 +39,8 @@ const TravelDetails = () => {
 
   return (
     <div>
+
+      <div className="text-blue-600 underline mb-6 cursor-pointer" onClick={()=>navigate("/travels")}>Back to Travels</div>
 
       <h1 className="text-3xl font-bold mb-4">Travel Details</h1>
       
