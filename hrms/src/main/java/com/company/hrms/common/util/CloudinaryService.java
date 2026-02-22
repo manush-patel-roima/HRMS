@@ -3,6 +3,7 @@ package com.company.hrms.common.util;
 import com.cloudinary.Cloudinary;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import com.company.hrms.common.exception.ExternalServiceException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +29,7 @@ public class CloudinaryService {
             return uploadResult.get("secure_url").toString();
 
         } catch (Exception e) {
-            throw new RuntimeException("Travel document upload failed: " + e.getMessage());
+            throw new ExternalServiceException("Travel document upload failed: " + e.getMessage(), e);
         }
     }
 
@@ -44,7 +45,7 @@ public class CloudinaryService {
             return uploadResult.get("secure_url").toString();
 
         } catch (Exception e) {
-            throw new RuntimeException("Expense proof upload failed: " + e.getMessage());
+            throw new ExternalServiceException("Expense proof upload failed: " + e.getMessage(), e);
         }
     }
 
@@ -60,7 +61,7 @@ public class CloudinaryService {
             return uploadResult.get("secure_url").toString();
 
         } catch (Exception e) {
-            throw new RuntimeException("Expense proof upload failed: " + e.getMessage());
+            throw new ExternalServiceException("Job JD upload failed: " + e.getMessage(), e);
         }
     }
 
@@ -75,7 +76,7 @@ public class CloudinaryService {
             return uploadResult.get("secure_url").toString();
 
         } catch (Exception e) {
-            throw new RuntimeException("Expense proof upload failed: " + e.getMessage());
+            throw new ExternalServiceException("Referral CV upload failed: " + e.getMessage(), e);
         }
     }
 }

@@ -1,6 +1,9 @@
 package com.company.hrms.employee.service;
 
+import com.company.hrms.common.exception.ResourceNotFoundException;
 import com.company.hrms.employee.dto.EmployeeListResponse;
+import com.company.hrms.employee.dto.EmployeeResponse;
+import com.company.hrms.employee.entity.Employee;
 import com.company.hrms.employee.repository.EmployeeRepository;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +38,34 @@ public class EmployeeService {
                         e.getFullName()
                 ))
                 .toList();
+    }
+
+
+    public EmployeeResponse getEmployeeByEmail(String email){
+        Employee e = employeeRepo.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
+
+        Integer managerId = null;
+        String managerName = null;
+        if(e.getManager()!=null){
+            managerId = e.getManager().getEmployeeId();
+            managerName = e.getManager().getFullName();
+        }
+
+        String roleName = e.getRole()!=null ? e.getRole().getRoleName() : null;
+
+        return new EmployeeResponse(
+                e.getEmployeeId(),
+                e.getFullName(),
+                e.getEmail(),
+                roleName,
+                managerId,
+                managerName,
+                e.getDepartment(),
+                e.getDesignation(),
+                e.getDateOfJoining(),
+                e.getProfileImageUrl()
+        );
     }
 
 

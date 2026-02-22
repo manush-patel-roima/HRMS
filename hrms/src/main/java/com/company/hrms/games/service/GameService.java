@@ -58,9 +58,9 @@ public class GameService {
                          Integer requestedById,
                          List<Employee> participants) {
 
-        GameSlot slot = slotRepo.findById(slotId).orElseThrow();
+        GameSlot slot = slotRepo.findById(slotId).orElseThrow(() -> new ResourceNotFoundException("Slot not found"));
 
-        Employee requestedBy = employeeRepo.findById(requestedById).orElseThrow();
+        Employee requestedBy = employeeRepo.findById(requestedById).orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
 
         if (slot.getStatus() == SlotStatus.CLOSED)
             throw new ValidationException("Slot closed");
@@ -71,7 +71,7 @@ public class GameService {
 
         GameSlotConfig config =
                 configRepo.findByGame_GameId(
-                        slot.getGame().getGameId()).orElseThrow();
+                        slot.getGame().getGameId()).orElseThrow(() -> new ResourceNotFoundException("Game config not found"));
 
         int totalPlayers = participants.size() + 1;
 
@@ -140,7 +140,7 @@ public class GameService {
     public void cancelBooking(Integer bookingGroupId) {
 
         BookingGroup group =
-                bookingGroupRepo.findById(bookingGroupId).orElseThrow();
+                bookingGroupRepo.findById(bookingGroupId).orElseThrow(() -> new ResourceNotFoundException("Booking group not found"));
 
         LocalDateTime slotStart =
                 group.getSlot().getSlotDate()
@@ -222,7 +222,7 @@ public class GameService {
                                                 p.getEmployee().getEmployeeId(),
                                                 slot.getGame().getGameId(),
                                                 slot.getSlotDate())
-                                        .orElseThrow();
+                                        .orElseThrow(() -> new ResourceNotFoundException("Player stats not found"));
 
                         stats.setPlayedCount(
                                 stats.getPlayedCount() + 1);
@@ -394,7 +394,7 @@ public class GameService {
     public void saveConfig(GameConfigRequest request) {
 
         Game game = gameRepo.findById(request.getGameId())
-                .orElseThrow(() -> new RuntimeException("Game not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Game not found"));
 
         GameSlotConfig config = configRepo
                 .findByGame_GameId(request.getGameId())
@@ -416,7 +416,7 @@ public class GameService {
 
         GameSlotConfig config = configRepo
                 .findByGame_GameId(gameId)
-                .orElseThrow(() -> new RuntimeException("Config not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Config not found"));
 
         return new GameConfigResponse(
                 gameId,

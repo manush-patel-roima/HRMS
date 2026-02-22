@@ -1,46 +1,3 @@
-// import { BrowserRouter, Routes, Route } from "react-router-dom";
-// import Login from "./pages/Login";
-// import ProtectedRoute from "./routes/ProtectedRoute";
-// import MainLayout from "./layouts/MainLayout";
-// import Dashboard from "./pages/common/Dashboard";
-// import MyTravels from "./pages/employee/MyTravels";
-// import TravelDetails from "./pages/employee/TravelDetails";
-// import TeamTravels from "./pages/manager/TeamTravels";
-// import TravelManagement from "./pages/hr/TravelManagement";
-// import CreateTravel from "./pages/hr/CreateTravel";
-// import HRTravelDetails from "./pages/hr/HRTravelDetails";
-// function App() {
-//   return (
-//     <BrowserRouter>
-//       <Routes>
-//         <Route path="/login" element={<Login />} />
-        
-//         <Route path="/" element={<ProtectedRoute/>}>
-//           <Route element={<MainLayout/>}>
-            
-//               <Route index element={<Dashboard />} />
-
-//               {/* EMPLOYEE */}
-//               <Route path="travels" element={<MyTravels />} />
-//               <Route path="travels/:id" element={<TravelDetails />} />
-
-//               {/* MANAGER */}
-//               <Route path="team-travels" element={<TeamTravels />} />
-
-//               {/* HR */}
-//               <Route path="hr/travels" element={<TravelManagement />} />
-//               <Route path="hr/travels/new" element={<CreateTravel />} />
-//               <Route path="hr/travels/:id" element={<HRTravelDetails />} />
-            
-//           </Route>
-//         </Route>
-//       </Routes>
-//     </BrowserRouter>
-//   );
-// }
-
-// export default App;
-
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
 import Login from "./pages/auth/Login";
@@ -87,6 +44,9 @@ import SlotMonitor from "./pages/hr/SlotMonitor";
 import MainLayout from "./layouts/MainLayout";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import AuthService from "./services/auth/authService";
+import SocialFeed from "./components/SocialFeed";
+import { ToastProvider } from "./context/ToastContext";
+import Toast from "./components/Toast";
 
 
 
@@ -96,7 +56,8 @@ function App() {
   const isLoggedIn = AuthService.isAuthenticated();
 
   return (
-    <Router>
+    <ToastProvider>
+      <Router>
       <Routes>
 
         <Route
@@ -421,10 +382,25 @@ function App() {
           }
         />                
 
+        {/* {Social Achievement and celebration Route} */}
+        
+        <Route
+          path="/social"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <SocialFeed />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
         <Route path="*" element={<Navigate to="/" replace />} />
 
       </Routes>
+      <Toast />
     </Router>
+    </ToastProvider>
   );
 }
 

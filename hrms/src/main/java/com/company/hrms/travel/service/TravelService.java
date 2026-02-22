@@ -1,7 +1,9 @@
 package com.company.hrms.travel.service;
 
+import com.company.hrms.common.exception.BusinessRuleViolationException;
+import com.company.hrms.common.exception.ForbiddenException;
 import com.company.hrms.common.exception.ResourceNotFoundException;
-import com.company.hrms.common.exception.UnauthorizedException;
+import com.company.hrms.common.exception.ValidationException;
 import com.company.hrms.common.service.EmailService;
 import com.company.hrms.common.util.CloudinaryService;
 import com.company.hrms.employee.entity.Employee;
@@ -61,11 +63,11 @@ public class TravelService {
 
         if(!loggedInHR.getRole().getRoleName().equals("HR"))
         {
-            throw new UnauthorizedException("Only HR can create travel");
+            throw new ForbiddenException("Only HR can create travel");
         }
 
         if(request.getStartDate().isAfter(request.getEndDate())){
-          throw new IllegalArgumentException("Start date cannot be after end date");
+          throw new ValidationException("Start date cannot be after end date");
         }
 
         List<TravelEmployee> overlappingTravels = travelEmployeeRepo.findOverlappingTravels(
@@ -75,10 +77,8 @@ public class TravelService {
         );
 
         if(!overlappingTravels.isEmpty()){
-            throw new IllegalArgumentException("One or more selected employees already have a travel during this period");
+            throw new BusinessRuleViolationException("One or more selected employees already have a travel during this period");
         }
-
-
 
         TravelPlan travel = new TravelPlan();
         travel.setTitle(request.getTitle());
@@ -167,7 +167,6 @@ public class TravelService {
                     .toList();
         }
 
-
         List<Integer> teamIds = employeeRepo
                 .findByManager_EmployeeId(loggedInUserId)
                 .stream()
@@ -186,8 +185,6 @@ public class TravelService {
                 ))
                 .toList();
     }
-
-
 
     @Transactional
     public TravelDocument uploadDocument(
@@ -210,7 +207,7 @@ public class TravelService {
 
         if(role.equals("HR")){
             if(employeeId == null){
-                throw new IllegalArgumentException("Employee must be selected");
+                throw new ValidationException("Employee must be selected");
             }
             selectedEmployee = employeeRepo.findById(employeeId)
                     .orElseThrow(()-> new ResourceNotFoundException("Employee not found"));
@@ -236,7 +233,6 @@ public class TravelService {
 
     }
 
-
     public TravelResponse getAssignedEmployees(Integer travelId)
     {
 
@@ -261,7 +257,6 @@ public class TravelService {
         );
     }
 
-
     public List<TravelSummary> getAssignedTravels(Integer employeeId)
     {
 
@@ -278,8 +273,6 @@ public class TravelService {
                 .toList();
     }
 
-
-
     public List<TravelDocumentUploadResponse> getTravelDocuments(Integer travelId, Integer loggedInUserId)
     {
 
@@ -290,7 +283,6 @@ public class TravelService {
                 .orElseThrow(() -> new ResourceNotFoundException("Travel not found"));
 
         String role = loggedInUser.getRole().getRoleName();
-
 
         if (role.equals("HR")) {
             return travelDocumentRepo.findByTravelPlan_TravelId(travelId)
@@ -306,7 +298,6 @@ public class TravelService {
                     ))
                     .toList();
         }
-
 
         if (role.equals("EMPLOYEE")) {
             return travelDocumentRepo
@@ -326,7 +317,6 @@ public class TravelService {
                     ))
                     .toList();
         }
-
 
         List<Integer> teamIds = employeeRepo
                 .findByManager_EmployeeId(loggedInUserId)

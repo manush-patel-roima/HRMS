@@ -5,8 +5,8 @@ const Sidebar = () => {
   const role = AuthService.getRole();
 
   const common = [
-    { label: "Dashboard", path: "/" },
-    { label: "Achievements", path: "/achievements" }, 
+    { label: "Dashboard", path: "/dashboard" },
+    { label: "Achievements", path: "/social" },
     { label: "Org Chart", path: "/org-chart" },
     
   ];

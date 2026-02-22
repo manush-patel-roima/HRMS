@@ -245,7 +245,7 @@ public class JobService {
 
     private ReferralResponse referralMapper(Referral referral)
     {
-        Employee employee = employeeRepo.findById(referral.getReferrerEmployeeId()).orElseThrow();
+        Employee employee = employeeRepo.findById(referral.getReferrerEmployeeId()).orElseThrow(() -> new ResourceNotFoundException("Referrer employee not found"));
         return new ReferralResponse(
                 referral.getReferralId(),
                 employee.getFullName(),

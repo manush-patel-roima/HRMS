@@ -2,7 +2,10 @@ package com.company.hrms.employee.controller;
 
 
 import com.company.hrms.employee.dto.EmployeeListResponse;
+import com.company.hrms.employee.dto.EmployeeResponse;
 import com.company.hrms.employee.service.EmployeeService;
+import com.company.hrms.security.CustomUserDetails;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,6 +30,11 @@ public class EmployeeController {
     @GetMapping
     public List<EmployeeListResponse> getAllEmployeesExceptManagerAndHr(){
         return employeeService.getAllEmployeesExceptManagerAndHr();
+    }
+
+    @GetMapping("/me")
+    public EmployeeResponse getCurrentEmployee(@AuthenticationPrincipal CustomUserDetails user){
+        return employeeService.getEmployeeByEmail(user.getUsername());
     }
 
 }

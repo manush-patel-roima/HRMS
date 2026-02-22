@@ -1,5 +1,6 @@
 import axios from "axios";
 import AuthService from "../services/auth/authService";
+import { handleApiError } from "../utils/errorHandler";
 
 const axiosInstance = axios.create({
     baseURL: "http://localhost:8080",
@@ -8,7 +9,6 @@ const axiosInstance = axios.create({
     },
 });
 
-
 axiosInstance.interceptors.request.use(
     (config) => {
         const token = AuthService.getToken();
@@ -16,7 +16,8 @@ axiosInstance.interceptors.request.use(
         if (token) {
             if(AuthService.isTokenExpired(token)){
                 AuthService.logout();
-                return Promise.reject("Token expired");
+                window.location.href = '/login';
+                return Promise.reject(new Error("Token expired"));
             }
             config.headers.Authorization = `Bearer ${token}`;
         }
@@ -30,13 +31,25 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
     (response) => response,
     (error) => {
+
         if(error.response) {
             const status = error.response.status;
 
-            if (status === 401 || status === 403) {
+            if (status === 401) {
                 AuthService.logout();
+                window.location.href = '/login';
+            } else if (status === 403) {
+
+                handleApiError(error);
+            } else {
+
+                handleApiError(error);
             }
+        } else {
+
+            handleApiError(error);
         }
+
         return Promise.reject(error);
     }
 );

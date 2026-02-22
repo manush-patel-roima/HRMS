@@ -9,8 +9,6 @@ class AuthService {
         localStorage.setItem("token", token);
         localStorage.setItem("role", role);
         localStorage.setItem("employeeId", employeeId);
-        // const decoded = jwtDecode(token);
-        // localStorage.setItem("employeeId", decoded.employeeId || "");
 
         return response.data;
     }
@@ -47,6 +45,22 @@ class AuthService {
         }
 
         return true;
+    }
+
+    static getCurrentUser() {
+        const employeeId = localStorage.getItem("employeeId");
+        const role = localStorage.getItem("role");
+        const token = this.getToken();
+
+        if (!employeeId || !token) {
+            return null;
+        }
+
+        return {
+            employeeId: parseInt(employeeId),
+            role: role,
+            roleName: role
+        };
     }
 }
 

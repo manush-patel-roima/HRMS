@@ -3,6 +3,7 @@ package com.company.hrms.expense.service;
 import com.company.hrms.common.exception.ResourceNotFoundException;
 import com.company.hrms.common.exception.UnauthorizedException;
 import com.company.hrms.common.exception.ValidationException;
+import com.company.hrms.common.exception.ForbiddenException;
 import com.company.hrms.common.util.CloudinaryService;
 import com.company.hrms.configdata.entity.StatusMaster;
 import com.company.hrms.configdata.repository.StatusMasterRepository;
@@ -47,6 +48,7 @@ public class ExpenseService {
     private final CloudinaryService cloudinaryService;
     private final EmailService emailService;
     private final SystemConfigService configService;
+    private final NotificationSocketService socketService;
 
     public ExpenseService(
             ExpenseRepository expenseRepo,
@@ -58,7 +60,8 @@ public class ExpenseService {
             ExpenseValidationConfigRepository configRepo,
             CloudinaryService cloudinaryService,
             EmailService emailService,
-            SystemConfigService configService
+            SystemConfigService configService,
+            NotificationSocketService socketService
     )
     {
 
@@ -72,6 +75,7 @@ public class ExpenseService {
         this.cloudinaryService = cloudinaryService;
         this.emailService = emailService;
         this.configService=configService;
+        this.socketService = socketService;
     }
 
 
@@ -119,7 +123,7 @@ public class ExpenseService {
 
         StatusMaster draftStatus = statusRepo
                 .findByModuleAndStatusCode("EXPENSE", "DRAFT")
-                .orElseThrow();
+                .orElseThrow(() -> new ResourceNotFoundException("Draft status not configured"));
 
         Expense expense = new Expense();
         expense.setEmployee(employee);
@@ -160,7 +164,7 @@ public class ExpenseService {
                 .orElseThrow(() -> new ResourceNotFoundException("Expense not found"));
 
         if (!expense.getEmployee().getEmployeeId().equals(employeeId)) {
-            throw new UnauthorizedException("Unauthorized");
+            throw new ForbiddenException("You cannot submit expense of other employee");
         }
 
 
@@ -175,7 +179,7 @@ public class ExpenseService {
 
         StatusMaster submittedStatus = statusRepo
                 .findByModuleAndStatusCode("EXPENSE", "SUBMITTED")
-                .orElseThrow();
+                .orElseThrow(() -> new ResourceNotFoundException("Submitted status not configured"));
 
         expense.setStatus(submittedStatus);
         expense.setSubmittedAt(LocalDateTime.now());
@@ -191,6 +195,10 @@ public class ExpenseService {
                 expense.getAmount().toString()
         );
 
+        employeeRepo.findByEmail(hrEmail).ifPresent(hr -> {
+            socketService.sendNotification(hr.getEmployeeId(), "New expense submitted by " + expense.getEmployee().getFullName());
+        });
+
         return mapToDetailDTO(expense);
     }
 
@@ -201,7 +209,7 @@ public class ExpenseService {
     {
 
         Expense expense = expenseRepo.findById(expenseId)
-                .orElseThrow();
+                .orElseThrow(() -> new ResourceNotFoundException("Expense not found"));
 
         if (!expense.getStatus().getStatusCode().equals("SUBMITTED")) {
             throw new ValidationException("Only submitted expenses can be approved");
@@ -209,11 +217,11 @@ public class ExpenseService {
 
         StatusMaster approved = statusRepo
                 .findByModuleAndStatusCode("EXPENSE", "APPROVED")
-                .orElseThrow();
+                .orElseThrow(() -> new ResourceNotFoundException("Approved status not configured"));
 
         expense.setStatus(approved);
         expense.setApprovedAt(LocalDateTime.now());
-        expense.setActionByHR(employeeRepo.findById(hrId).orElseThrow());
+        expense.setActionByHR(employeeRepo.findById(hrId).orElseThrow(() -> new ResourceNotFoundException("HR not found")));
 
         createHistory(expense, "SUBMITTED", "APPROVED", expense.getActionByHR(), null);
 
@@ -231,7 +239,7 @@ public class ExpenseService {
         }
 
         Expense expense = expenseRepo.findById(expenseId)
-                .orElseThrow();
+                .orElseThrow(() -> new ResourceNotFoundException("Expense not found"));
 
         if (!expense.getStatus().getStatusCode().equals("SUBMITTED")) {
             throw new ValidationException("Only submitted expenses can be rejected");
@@ -239,12 +247,12 @@ public class ExpenseService {
 
         StatusMaster rejected = statusRepo
                 .findByModuleAndStatusCode("EXPENSE", "REJECTED")
-                .orElseThrow();
+                .orElseThrow(() -> new ResourceNotFoundException("Rejected status not configured"));
 
         expense.setStatus(rejected);
         expense.setRejectedAt(LocalDateTime.now());
         expense.setHrRemark(remark);
-        expense.setActionByHR(employeeRepo.findById(hrId).orElseThrow());
+        expense.setActionByHR(employeeRepo.findById(hrId).orElseThrow(() -> new ResourceNotFoundException("HR not found")));
 
         createHistory(expense, "SUBMITTED", "REJECTED", expense.getActionByHR(), remark);
 
@@ -252,32 +260,6 @@ public class ExpenseService {
     }
 
 
-
-
-//    public List<ExpenseSummary> filterExpenses(
-//            Integer employeeId,
-//            String status,
-//            Integer travelId,
-//            LocalDate from,
-//            LocalDate to)
-//    {
-//
-//        List<Expense> expenses = expenseRepo.findAll();
-//
-//        return expenses.stream()
-//                .filter(e -> employeeId == null ||
-//                        e.getEmployee().getEmployeeId().equals(employeeId))
-//                .filter(e -> status == null ||
-//                        e.getStatus().getStatusCode().equals(status))
-//                .filter(e -> travelId == null ||
-//                        e.getTravelPlan().getTravelId().equals(travelId))
-//                .filter(e -> from == null ||
-//                        !e.getExpenseDate().isBefore(from))
-//                .filter(e -> to == null ||
-//                        !e.getExpenseDate().isAfter(to))
-//                .map(this::mapToSummaryDTO)
-//                .toList();
-//    }
 
 
     public List<ExpenseSummary> filterExpenses(
@@ -339,10 +321,10 @@ public class ExpenseService {
     {
 
         Expense expense = expenseRepo.findById(expenseId)
-                .orElseThrow(()->new ResourceNotFoundException("Expense does not exists"));
+                .orElseThrow(()->new ResourceNotFoundException("Expense not found"));
 
         if (!expense.getEmployee().getEmployeeId().equals(employeeId)) {
-            throw new UnauthorizedException("Unauthorized");
+            throw new ForbiddenException("You cannot view expense of other employee");
         }
 
         return mapToDetailDTO(expense);
@@ -368,7 +350,7 @@ public class ExpenseService {
     {
 
         Expense expense = expenseRepo.findById(expenseId)
-                .orElseThrow(()->new ResourceNotFoundException("Expense does not exists"));
+                .orElseThrow(()->new ResourceNotFoundException("Expense not found"));
 
         return mapToDetailDTO(expense);
     }

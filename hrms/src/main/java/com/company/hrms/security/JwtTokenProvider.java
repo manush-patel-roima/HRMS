@@ -1,6 +1,5 @@
 package com.company.hrms.security;
 
-import com.company.hrms.employee.entity.Employee;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
@@ -18,7 +17,6 @@ public class JwtTokenProvider {
     public String generateToken(String email) {
         return Jwts.builder()
                 .setSubject(email)
-//                .claim("employeeId", employee.getEmployeeId())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION))
                 .signWith(signingKey)

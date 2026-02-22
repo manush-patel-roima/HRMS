@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.List;
 import com.company.hrms.jobs.entity.*;
 import com.company.hrms.jobs.repository.ReferralEmailLogRepository;
+import com.company.hrms.common.exception.ExternalServiceException;
 
 @Service
 public class JobEmailService {
@@ -83,9 +84,9 @@ public class JobEmailService {
             mailSender.send(message);
 
         } catch (MessagingException e) {
-            throw new RuntimeException("Email failed");
+            throw new ExternalServiceException("Email failed", e);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ExternalServiceException("Attachment error", e);
         }
     }
 }
