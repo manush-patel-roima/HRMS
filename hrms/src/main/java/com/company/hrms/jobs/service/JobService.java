@@ -4,6 +4,8 @@ import com.company.hrms.common.exception.ResourceNotFoundException;
 import com.company.hrms.common.exception.ValidationException;
 import com.company.hrms.common.util.CloudinaryService;
 import com.company.hrms.configdata.service.SystemConfigService;
+import com.company.hrms.employee.entity.Employee;
+import com.company.hrms.employee.repository.EmployeeRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,6 +30,7 @@ public class JobService {
     private final JobEmailService emailService;
     private final CloudinaryService cloudinaryService;
     private final SystemConfigService configService;
+    private final EmployeeRepository employeeRepo;
 
     public JobService(
             JobRepository jobRepo,
@@ -36,7 +39,8 @@ public class JobService {
             JobShareRepository shareRepo,
             JobEmailService emailService,
             CloudinaryService cloudinaryService,
-            SystemConfigService configService
+            SystemConfigService configService,
+            EmployeeRepository employeeRepo
     ) {
 
         this.jobRepo = jobRepo;
@@ -46,6 +50,7 @@ public class JobService {
         this.emailService = emailService;
         this.cloudinaryService=cloudinaryService;
         this.configService = configService;
+        this.employeeRepo = employeeRepo;
     }
 
 
@@ -119,10 +124,14 @@ public class JobService {
     @Transactional
     public ReferralResponse createReferral(CreateReferralRequest request, MultipartFile cvFile, Integer employeeId) {
 
-        validateCV(cvFile);
-
         Job job = jobRepo.findById(request.getJobId())
-                .orElseThrow(()->new ResourceNotFoundException("Job not found"));
+                        .orElseThrow(()->new ResourceNotFoundException("Job not found"));
+
+        if(!job.getIsActive()){
+            throw new ValidationException("Cannot refer for inactive job");
+        }
+
+        validateCV(cvFile);
 
         Referral referral = new Referral();
         referral.setJob(job);
@@ -165,6 +174,9 @@ public class JobService {
         Referral referral = referralRepo.findById(referralId)
                 .orElseThrow(()->new ResourceNotFoundException("Referral not found"));
 
+        if(!referral.getJob().getIsActive()){
+            throw new ValidationException("Cannot update referral of inactive job");
+        }
         validate(referral.getStatus(), request.getStatus());
 
         referral.setStatus(request.getStatus());
@@ -182,7 +194,7 @@ public class JobService {
 
     public List<ReferralResponse> listMyReferrals(Integer employeeId) {
 
-        return referralRepo.findByReferrerEmployeeId(employeeId)
+        return referralRepo.findActiveReferralsByEmployeeId(employeeId)
                 .stream()
                 .map(this::referralMapper)
                 .toList();
@@ -194,7 +206,7 @@ public class JobService {
 
     public List<ReferralResponse> listAllReferrals() {
 
-        return referralRepo.findAll()
+        return referralRepo.findAllActiveReferrals()
                 .stream()
                 .map(this::referralMapper)
                 .toList();
@@ -231,10 +243,13 @@ public class JobService {
 
 
 
-    private ReferralResponse referralMapper(Referral referral) {
+    private ReferralResponse referralMapper(Referral referral)
+    {
+        Employee employee = employeeRepo.findById(referral.getReferrerEmployeeId()).orElseThrow();
         return new ReferralResponse(
                 referral.getReferralId(),
-                referral.getJob().getJobId(),
+                employee.getFullName(),
+                referral.getJob().getTitle(),
                 referral.getFriendName(),
                 referral.getFriendEmail(),
                 referral.getStatus(),

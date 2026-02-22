@@ -6,8 +6,7 @@ const Sidebar = () => {
 
   const common = [
     { label: "Dashboard", path: "/" },
-    { label: "Achievements", path: "/achievements" },
-    { label: "Games", path: "/games" },
+    { label: "Achievements", path: "/achievements" }, 
     { label: "Org Chart", path: "/org-chart" },
     
   ];
@@ -15,7 +14,8 @@ const Sidebar = () => {
   const employee = [
     { label: "Travels", path: "/travels" },
     { label: "Expenses", path: "/expenses" },
-    { label: "Jobs", path: "/jobs" }
+    { label: "Jobs", path: "/jobs" },
+    { label: "Games", path: "/games" },
   ];
 
   const manager = [
@@ -26,7 +26,7 @@ const Sidebar = () => {
   const hr = [
     { label: "Travel Management", path: "/hr/travels" },
     { label: "Expense Approvals", path: "/hr/expenses" },
-    { label: "Games Config", path: "/hr/games" },
+    { label: "Games Config", path: "/hr/games-config" },
     { label: "Jobs", path: "/hr/jobs" },
     { label: "System Config", path: "/hr/config" }
   ];

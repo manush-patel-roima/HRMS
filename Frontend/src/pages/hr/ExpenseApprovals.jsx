@@ -25,27 +25,27 @@ const ExpenseApprovals = () => {
       <div className="bg-white p-4 rounded shadow mb-4 grid grid-cols-4 gap-2">
 
         <input
-          placeholder="Employee ID"
+          placeholder="Employee Name"
           className="border p-2"
-          onChange={e => setFilters({ ...filters, employeeId: parseInt(e.target.value)})}
+          onChange={e => setFilters({ ...filters, employeeName: e.target.value || null})}
         />
 
         <input
           placeholder="Status"
           className="border p-2"
-          onChange={e => setFilters({ ...filters, status: e.target.value })}
+          onChange={e => setFilters({ ...filters, status: e.target.value || null })}
         />
 
         <input
           type="date"
           className="border p-2"
-          onChange={e => setFilters({ ...filters, from: e.target.value })}
+          onChange={e => setFilters({ ...filters, from: e.target.value || null })}
         />
 
         <input
           type="date"
           className="border p-2"
-          onChange={e => setFilters({ ...filters, to: e.target.value })}
+          onChange={e => setFilters({ ...filters, to: e.target.value || null })}
         />
 
         <button

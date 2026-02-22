@@ -38,7 +38,7 @@ const MyReferrals = () => {
 
           <div>
             <p>Friend's Name:  {r.friendName}</p>
-            <p>Job Id:  {r.jobId}</p>
+            <p>Job Name:  {r.jobName}</p>
           </div>
           
           <div className="flex flex-col justify-center">

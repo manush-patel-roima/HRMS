@@ -76,9 +76,18 @@ import ReferralsList from "./pages/hr/ReferralsList";
 
 import ConfigManagement from "./pages/hr/ConfigManagement";
 
+import GamesDashboard from "./pages/employee/GamesDashboard";
+import UpcomingSlots from "./pages/employee/UpcomingSlots";
+import MakeBookingRequest from "./pages/employee/MakeBookingRequest";
+import MyBookings from "./pages/employee/MyBookings";
+
+import GameConfig from "./pages/hr/GameConfig";
+import SlotMonitor from "./pages/hr/SlotMonitor";
+
 import MainLayout from "./layouts/MainLayout";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import AuthService from "./services/auth/authService";
+
 
 
 
@@ -342,7 +351,75 @@ function App() {
               </MainLayout>
             </ProtectedRoute>
           }
-        />          
+        />  
+
+        {/* {Games Routes} */}
+
+        <Route
+          path="/games"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <GamesDashboard />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/games/:gameId/slots"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <UpcomingSlots />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/booking/:slotId"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <MakeBookingRequest />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/my-bookings"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <MyBookings />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/hr/games-config"
+          element={
+            <ProtectedRoute >
+              <MainLayout>
+                <GameConfig />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/hr/slot-monitor"
+          element={
+            <ProtectedRoute >
+              <MainLayout>
+                <SlotMonitor />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />                
 
         <Route path="*" element={<Navigate to="/" replace />} />
 

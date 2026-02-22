@@ -49,10 +49,9 @@ const ReferralsList = () => {
                className="border-b py-2 flex justify-between items-center">
 
             <div>
-              <p className="font-semibold">{r.friendName}</p>
-              <p className="text-sm text-gray-500">
-                Job ID: {r.jobId}
-              </p>
+              <p className="font-semibold">Friend's Name: {r.friendName}</p>
+              <p className="text-sm text-gray-500">Job Name: {r.jobName}</p>
+              <p className="text-sm text-gray-500">Referred By: {r.referrer}</p>
             </div>
 
             <div className="flex gap-2 items-center">

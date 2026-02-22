@@ -5,17 +5,18 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
-public class GameSlotResponse {
+public class SlotMonitorResponse {
 
     private Integer slotId;
     private String gameName;
     private LocalDate date;
     private LocalTime startTime;
     private LocalTime endTime;
-    private SlotStatus slotStatus;
-
+    private SlotStatus status;
+    private List<String> participants;
 }

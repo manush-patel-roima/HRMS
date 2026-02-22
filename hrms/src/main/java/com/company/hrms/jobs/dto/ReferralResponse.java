@@ -10,7 +10,8 @@ import com.company.hrms.jobs.entity.ReferralStatus;
 public class ReferralResponse {
 
     private Integer referralId;
-    private Integer jobId;
+    private String referrer;
+    private String jobName;
     private String friendName;
     private String friendEmail;
     private ReferralStatus status;

@@ -254,31 +254,46 @@ public class ExpenseService {
 
 
 
+//    public List<ExpenseSummary> filterExpenses(
+//            Integer employeeId,
+//            String status,
+//            Integer travelId,
+//            LocalDate from,
+//            LocalDate to)
+//    {
+//
+//        List<Expense> expenses = expenseRepo.findAll();
+//
+//        return expenses.stream()
+//                .filter(e -> employeeId == null ||
+//                        e.getEmployee().getEmployeeId().equals(employeeId))
+//                .filter(e -> status == null ||
+//                        e.getStatus().getStatusCode().equals(status))
+//                .filter(e -> travelId == null ||
+//                        e.getTravelPlan().getTravelId().equals(travelId))
+//                .filter(e -> from == null ||
+//                        !e.getExpenseDate().isBefore(from))
+//                .filter(e -> to == null ||
+//                        !e.getExpenseDate().isAfter(to))
+//                .map(this::mapToSummaryDTO)
+//                .toList();
+//    }
+
+
     public List<ExpenseSummary> filterExpenses(
-            Integer employeeId,
+            String employeeName,
             String status,
             Integer travelId,
             LocalDate from,
             LocalDate to)
     {
-
-        List<Expense> expenses = expenseRepo.findAll();
+        List<Expense> expenses = expenseRepo.filterExpenses(employeeName,status,travelId,from,to);
 
         return expenses.stream()
-                .filter(e -> employeeId == null ||
-                        e.getEmployee().getEmployeeId().equals(employeeId))
-                .filter(e -> status == null ||
-                        e.getStatus().getStatusCode().equals(status))
-                .filter(e -> travelId == null ||
-                        e.getTravelPlan().getTravelId().equals(travelId))
-                .filter(e -> from == null ||
-                        !e.getExpenseDate().isBefore(from))
-                .filter(e -> to == null ||
-                        !e.getExpenseDate().isAfter(to))
                 .map(this::mapToSummaryDTO)
                 .toList();
-    }
 
+    }
 
 
 

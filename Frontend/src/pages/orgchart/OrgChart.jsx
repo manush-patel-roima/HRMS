@@ -68,14 +68,26 @@ const OrgChart = () => {
         
         
         {data.managerChain.length > 0 && (
-          <div className="relative pb-6 flex flex-col items-center">
+          <div className="relative pb-6 flex flex-col-reverse items-center">
             
             <div className="absolute bottom-0 w-px h-6 bg-gray-300"></div>
             
-            {data.managerChain.slice(-1).map(m => (
-              <div key={m.employeeId} className="bg-sky-100 p-4 rounded-lg cursor-pointer hover:bg-gray-100 text-center w-48 shadow" onClick={() => loadEmployee(m.employeeId)}>
-                <p className="text-xs text-blue-700 font-medium mb-2">Manager</p> 
-                <Avatar employee={m} size="w-16 h-16"/>
+            {data.managerChain.map((m, index) => (
+              <div key={m.employeeId}>
+                {index < data.managerChain.length - 1 && (
+                  <div className="relative">
+                    <div className="absolute left-1/2 transform -translate-x-1/2 w-px h-6 bg-gray-300"></div>
+                    <div className="h-6"></div> 
+                  </div>
+                )}
+
+                <div 
+                  className="bg-sky-100 p-4 rounded-lg cursor-pointer hover:bg-gray-100 text-center w-48 shadow" 
+                  onClick={() => loadEmployee(m.employeeId)}
+                >
+                  <p className="text-xs text-blue-700 font-medium mb-2">Manager</p>
+                  <Avatar employee={m} size="w-16 h-16"/>
+                </div>
               </div>
             ))}
           </div>

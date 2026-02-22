@@ -29,14 +29,15 @@ public class HRExpenseController {
 
     @GetMapping
     public List<ExpenseSummary> filter(
-            @RequestParam(required = false) Integer employeeId,
+//            @RequestParam(required = false) Integer employeeId,
+            @RequestParam(required = false) String employeeName,
             @RequestParam(required = false) String status,
             @RequestParam(required = false) Integer travelId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to
     )
     {
-        return expenseService.filterExpenses(employeeId, status, travelId, from, to);
+        return expenseService.filterExpenses(employeeName, status, travelId, from, to);
     }
 
 

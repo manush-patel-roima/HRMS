@@ -4,7 +4,8 @@ import lombok.*;
 
 @Getter
 @Setter
-public class GameConfigRequest {
+@AllArgsConstructor
+public class GameConfigResponse {
 
     private Integer gameId;
 

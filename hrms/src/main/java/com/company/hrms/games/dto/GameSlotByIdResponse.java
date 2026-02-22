@@ -9,13 +9,23 @@ import java.time.LocalTime;
 @Getter
 @Setter
 @AllArgsConstructor
-public class GameSlotResponse {
+public class GameSlotByIdResponse {
 
     private Integer slotId;
+
+    private Integer gameId;
+
     private String gameName;
+
     private LocalDate date;
+
     private LocalTime startTime;
+
     private LocalTime endTime;
+
     private SlotStatus slotStatus;
 
+    private Integer minPlayers;
+
+    private Integer maxPlayers;
 }
