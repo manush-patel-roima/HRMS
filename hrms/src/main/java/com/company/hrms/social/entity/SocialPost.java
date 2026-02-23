@@ -51,9 +51,9 @@ public class SocialPost {
     private LocalDate systemPostDate;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<com.company.hrms.social.entity.SocialComment> comments = new ArrayList<>();
+    private List<SocialComment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<com.company.hrms.social.entity.SocialLike> likes = new ArrayList<>();
+    private List<SocialLike> likes = new ArrayList<>();
 
 }

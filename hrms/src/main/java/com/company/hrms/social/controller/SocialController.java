@@ -57,25 +57,27 @@ public class SocialController {
     }
 
     @DeleteMapping("/posts/{id}")
-    public void deletePost(@AuthenticationPrincipal CustomUserDetails user, @PathVariable Long id){
+    public SocialPostDto deletePost(@AuthenticationPrincipal CustomUserDetails user, @PathVariable Long id){
         boolean isHr = user.getAuthorities().stream().anyMatch(a->a.getAuthority().equals("ROLE_HR"));
         service.deletePost(id, user.getEmployeeId(), isHr);
+        return new SocialPostDto();
     }
 
     @PutMapping("/posts/{id}")
-    public void editPost(@AuthenticationPrincipal CustomUserDetails user, @PathVariable Long id, @RequestBody CreateSocialPostRequest req){
-        service.editPost(id, req, user.getEmployeeId());
+    public SocialPostDto editPost(@AuthenticationPrincipal CustomUserDetails user, @PathVariable Long id, @RequestBody CreateSocialPostRequest req){
+        return service.editPost(id, req, user.getEmployeeId());
     }
 
     @PutMapping("/comments/{commentId}")
-    public void editComment(@AuthenticationPrincipal CustomUserDetails user, @PathVariable Long commentId, @RequestBody CreateCommentRequest req){
-        service.editComment(commentId, req.getText(), user.getEmployeeId());
+    public SocialCommentDto editComment(@AuthenticationPrincipal CustomUserDetails user, @PathVariable Long commentId, @RequestBody CreateCommentRequest req){
+        return service.editComment(commentId, req.getText(), user.getEmployeeId());
     }
 
     @DeleteMapping("/comments/{commentId}")
-    public void deleteComment(@AuthenticationPrincipal CustomUserDetails user, @PathVariable Long commentId){
+    public SocialCommentDto deleteComment(@AuthenticationPrincipal CustomUserDetails user, @PathVariable Long commentId){
         boolean isHr = user.getAuthorities().stream().anyMatch(a->a.getAuthority().equals("ROLE_HR"));
         service.deleteComment(commentId, user.getEmployeeId(), isHr);
+        return new SocialCommentDto(null, null, null, null, null);
     }
 
 }

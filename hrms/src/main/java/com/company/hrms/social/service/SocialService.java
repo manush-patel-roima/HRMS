@@ -2,6 +2,7 @@ package com.company.hrms.social.service;
 
 import com.company.hrms.common.exception.ResourceNotFoundException;
 import com.company.hrms.common.exception.ForbiddenException;
+import com.company.hrms.common.service.EmailService;
 import com.company.hrms.employee.entity.Employee;
 import com.company.hrms.employee.repository.EmployeeRepository;
 import com.company.hrms.notification.NotificationService;
@@ -37,7 +38,7 @@ public class SocialService {
     private final EmployeeRepository employeeRepo;
     private final NotificationService notificationService;
     private final SocialMapper mapper;
-    private final com.company.hrms.common.service.EmailService emailService;
+    private final EmailService emailService;
 
     public SocialService(SocialPostRepository postRepo,
                          SocialCommentRepository commentRepo,
@@ -45,7 +46,7 @@ public class SocialService {
                          EmployeeRepository employeeRepo,
                          NotificationService notificationService,
                          SocialMapper mapper,
-                         com.company.hrms.common.service.EmailService emailService){
+                         EmailService emailService){
         this.postRepo = postRepo;
         this.commentRepo = commentRepo;
         this.likeRepo = likeRepo;
@@ -79,7 +80,6 @@ public class SocialService {
             }
         }
 
-        // prevent duplicate system posts: check existing
         if(systemGenerated && req.getRelatedEmployeeId()!=null && req.getPostType()!=null){
             Optional<SocialPost> existing = postRepo.findSystemPostByTypeAndRelatedEmployeeAndDate(
                     req.getPostType(), req.getRelatedEmployeeId(), LocalDate.now());
@@ -92,7 +92,6 @@ public class SocialService {
         try{
             saved = postRepo.save(p);
         }catch(DataIntegrityViolationException ex){
-            // likely duplicate system post due to race
             Optional<SocialPost> existing = postRepo.findSystemPostByTypeAndRelatedEmployeeAndDate(
                     req.getPostType(), req.getRelatedEmployeeId(), LocalDate.now());
             if(existing.isPresent()){
@@ -101,13 +100,11 @@ public class SocialService {
             throw ex;
         }
 
-        // send notification to related employee if present and not system-generated (or even if system-generated)
         if(saved.getRelatedEmployee()!=null){
             String message = (systemGenerated ? "Celebration: " : "") + saved.getTitle();
             try{
                 notificationService.createNotification(saved.getRelatedEmployee().getEmployeeId(), message, "social_post:"+saved.getId(), "/social");
             }catch(Exception ex){
-                // logging
             }
         }
 
@@ -124,7 +121,6 @@ public class SocialService {
             posts = postRepo.findAllByOrderByCreatedAtDesc(pr);
         }
 
-        // filter in-memory for tags and date range to keep repository simple
         Page<SocialPostDto> dtoPage = posts.map(p -> mapper.toDto(p, currentEmployeeId));
 
         if(tagFilter==null && fromDate==null && toDate==null){
@@ -135,7 +131,14 @@ public class SocialService {
                 .filter(p->{
                     boolean ok = true;
                     if(tagFilter!=null && p.getTags()!=null){
-                        ok = p.getTags().contains(tagFilter);
+                        String[] tags = p.getTags().split(",");
+                        ok = false;
+                        for(String tag : tags){
+                            if(tag.trim().equalsIgnoreCase(tagFilter.trim())){
+                                ok = true;
+                                break;
+                            }
+                        }
                     }
                     if(ok && fromDate!=null){
                         ok = !p.getCreatedAt().toLocalDate().isBefore(fromDate);
@@ -147,7 +150,6 @@ public class SocialService {
                 })
                 .collect(Collectors.toList());
 
-        // convert back to a Page by using existing metadata - simple approach: return a PageImpl
         return new org.springframework.data.domain.PageImpl<>(filtered, pr, filtered.size());
     }
 
@@ -168,7 +170,6 @@ public class SocialService {
 
         SocialComment saved = commentRepo.save(c);
 
-        // notify post author
         if(p.getAuthor()!=null && !p.getAuthor().getEmployeeId().equals(commenterId)){
             try{
                 notificationService.createNotification(p.getAuthor().getEmployeeId(), commenter.getFullName()+" commented on your post", "social_post:"+p.getId(), "/social");
@@ -179,13 +180,14 @@ public class SocialService {
     }
 
     @Transactional
-    public void editComment(Long commentId, String text, Integer requesterId){
+    public SocialCommentDto editComment(Long commentId, String text, Integer requesterId){
         SocialComment c = commentRepo.findById(commentId).orElseThrow(()-> new ResourceNotFoundException("Comment not found"));
         if(!c.getCommenter().getEmployeeId().equals(requesterId)){
             throw new ForbiddenException("Unauthorized");
         }
         c.setText(text);
-        commentRepo.save(c);
+        SocialComment saved = commentRepo.save(c);
+        return mapper.toCommentDto(saved);
     }
 
     @Transactional
@@ -197,7 +199,6 @@ public class SocialService {
         commentRepo.delete(c);
 
         if(isHr && !c.getCommenter().getEmployeeId().equals(requesterId)){
-            // send warning email
             try{
                 String to = c.getCommenter().getEmail();
                 emailService.sendWarningEmail(to, "Inappropriate comment removed", "Your comment was removed by HR for violating guidelines.");
@@ -214,7 +215,6 @@ public class SocialService {
         postRepo.delete(p);
 
         if(isHr && !p.getAuthor().getEmployeeId().equals(requesterId)){
-            // send warning email to author
             try{
                 emailService.sendWarningEmail(p.getAuthor().getEmail(), "Post removed by HR", "Your post titled '"+p.getTitle()+"' was removed by HR for violating guidelines.");
             }catch(Exception ex){ }
@@ -222,7 +222,7 @@ public class SocialService {
     }
 
     @Transactional
-    public void editPost(Long postId, CreateSocialPostRequest req, Integer requesterId){
+    public SocialPostDto editPost(Long postId, CreateSocialPostRequest req, Integer requesterId){
         SocialPost p = postRepo.findById(postId).orElseThrow(()-> new ResourceNotFoundException("Post not found"));
         if(!p.getAuthor().getEmployeeId().equals(requesterId)){
             throw new ForbiddenException("Unauthorized");
@@ -230,7 +230,8 @@ public class SocialService {
         p.setTitle(req.getTitle());
         p.setDescription(req.getDescription());
         p.setTags(req.getTags());
-        postRepo.save(p);
+        SocialPost saved = postRepo.save(p);
+        return mapper.toDto(saved, requesterId);
     }
 
     @Transactional
@@ -248,14 +249,12 @@ public class SocialService {
             try{
                 likeRepo.save(l);
             }catch(DataIntegrityViolationException ex){
-                // duplicate like attempted concurrently
                 return true;
             }
             return true;
         }
     }
 
-    // scheduled job: create birthday and anniversary posts
     @Transactional
     public void generateDailyCelebrationPosts(){
         List<Employee> employees = employeeRepo.findAll();
@@ -288,9 +287,9 @@ public class SocialService {
         }
     }
 
-    // helper: system user id - use HR admin or a virtual system account if available - fallback to first HR
+
     private Integer getSystemUserId(){
-        // try to find HR user
+
         Optional<Employee> hr = employeeRepo.findAll()
                 .stream()
                 .filter(x-> x.getRole()!=null && "HR".equals(x.getRole().getRoleName()))

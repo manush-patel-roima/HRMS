@@ -52,6 +52,13 @@ const deleteComment = (commentId) => {
   });
 }
 
+const editComment = (commentId, text) => {
+  return axios.put(`${API_BASE}/comments/${commentId}`, { text }).then(r => {
+    showSuccessToast('Comment updated successfully!');
+    return r.data;
+  });
+}
+
 export default {
   feed,
   createPost,
@@ -60,5 +67,6 @@ export default {
   toggleLike,
   editPost,
   deletePost,
-  deleteComment
+  deleteComment,
+  editComment
 };
