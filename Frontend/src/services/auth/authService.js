@@ -1,15 +1,16 @@
 import { jwtDecode } from "jwt-decode";
 import axiosInstance from "../../api/axiosInstance";
+import { showSuccessToast } from "../../utils/toastUtils";
 
 class AuthService {
 
-    static async login(email,password) {
-        const response = await axiosInstance.post("/api/auth/login",{email,password});
-        const {token,role,employeeId} = response.data;
+    static async login(email, password) {
+        const response = await axiosInstance.post("/api/auth/login", { email, password });
+        const { token, role, employeeId } = response.data;
         localStorage.setItem("token", token);
         localStorage.setItem("role", role);
         localStorage.setItem("employeeId", employeeId);
-
+        showSuccessToast('Login successful!');
         return response.data;
     }
 

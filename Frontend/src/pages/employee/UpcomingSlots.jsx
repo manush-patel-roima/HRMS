@@ -8,11 +8,23 @@ const UpcomingSlots = () => {
   const navigate = useNavigate();
 
   const [slots, setSlots] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    GameService.getUpcomingSlots(gameId)
-      .then(res => setSlots(res.data));
+    fetchSlots();
   }, [gameId]);
+
+  const fetchSlots = async () => {
+    setLoading(true);
+    try {
+      const res = await GameService.getUpcomingSlots(gameId);
+      setSlots(res.data);
+    } catch (error) {
+      console.error('Error fetching slots:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div>

@@ -1,13 +1,25 @@
 import { useEffect, useState } from "react";
-import axiosInstance from "../api/axiosInstance";
 import TravelService from "../services/travel/travelService";
 
 const DocumentTable = ({ travelId }) => {
   const [docs, setDocs] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    TravelService.getTravelDocuments(travelId).then(res => setDocs(res.data));
+    fetchDocuments();
   }, [travelId]);
+
+  const fetchDocuments = async () => {
+    setLoading(true);
+    try {
+      const res = await TravelService.getTravelDocuments(travelId);
+      setDocs(res.data);
+    } catch (error) {
+      console.error('Error fetching documents:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="bg-white p-4 rounded shadow">

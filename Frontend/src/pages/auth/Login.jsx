@@ -6,18 +6,20 @@ import AuthService from "../../services/auth/authService";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-    
+    setLoading(true);
+
     try {
       await AuthService.login(email, password);
       navigate("/dashboard");
     } catch (err) {
-      setError("Invalid email or password");
+      console.error('Login error:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -28,12 +30,6 @@ const Login = () => {
           HRMS Login
         </h2>
 
-        {error && (
-          <p className="bg-red-100 text-red-600 p-2 rounded mb-4 text-sm">
-            {error}
-          </p>
-        )}
-
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="email"
@@ -42,6 +38,7 @@ const Login = () => {
             className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             onChange={(e) => setEmail(e.target.value)}
             required
+            disabled={loading}
           />
 
           <input
@@ -51,13 +48,15 @@ const Login = () => {
             className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             onChange={(e) => setPassword(e.target.value)}
             required
+            disabled={loading}
           />
 
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded font-semibold transition"
+            disabled={loading}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded font-semibold transition disabled:bg-gray-400"
           >
-            Login
+            {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
       </div>

@@ -4,10 +4,18 @@ import GameService from "../../services/games/gameService";
 const MyBookings = () => {
 
   const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const load = () => {
-    GameService.getMyBookings()
-      .then(res => setBookings(res.data));
+  const load = async () => {
+    setLoading(true);
+    try {
+      const res = await GameService.getMyBookings();
+      setBookings(res.data);
+    } catch (error) {
+      console.error('Error fetching bookings:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -15,8 +23,12 @@ const MyBookings = () => {
   }, []);
 
   const cancel = async (id) => {
-    await GameService.cancelBooking(id);
-    load();
+    try {
+      await GameService.cancelBooking(id);
+      load();
+    } catch (error) {
+      console.error('Error cancelling booking:', error);
+    }
   };
 
   return (

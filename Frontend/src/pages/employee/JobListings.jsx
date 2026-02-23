@@ -21,8 +21,8 @@ const JobListings = () => {
     try {
       const res = await JobService.listJobs();
       setJobs(res.data);
-    } catch (err) {
-      alert("Failed to load jobs");
+    } catch (error) {
+      console.error('Error fetching jobs:', error);
     } finally {
       setLoading(false);
     }

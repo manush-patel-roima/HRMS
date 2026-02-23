@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import GameService from "../../services/games/gameService";
+import { showWarningToast } from "../../utils/toastUtils";
 
 const MakeBookingRequest = () => {
 
@@ -12,6 +13,7 @@ const MakeBookingRequest = () => {
   const [employees, setEmployees] = useState([]);
   const [selected, setSelected] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
 
   useEffect(() => {
@@ -66,21 +68,23 @@ const MakeBookingRequest = () => {
   const submit = async () => {
 
     if (!isMinSatisfied) {
-      alert(`Minimum ${slot.minPlayers} players required.`);
+      showWarningToast(`Minimum ${slot.minPlayers} players required.`);
       return;
     }
 
+    setSubmitting(true);
     try {
       await GameService.bookSlot({
         slotId,
         participantIds: selected
       });
 
-      alert("Booking request submitted");
       navigate("/games");
 
     } catch (err) {
       console.error("Booking error", err);
+    } finally {
+      setSubmitting(false);
     }
   };
 

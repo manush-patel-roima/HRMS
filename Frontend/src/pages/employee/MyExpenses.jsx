@@ -5,12 +5,24 @@ import ExpenseService from "../../services/expense/expenseService";
 const MyExpenses = () => {
 
   const [travelGroups, setTravelGroups] = useState([]);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    ExpenseService.getMyExpenses()
-      .then(res => setTravelGroups(res.data));
+    fetchExpenses();
   }, []);
+
+  const fetchExpenses = async () => {
+    setLoading(true);
+    try {
+      const res = await ExpenseService.getMyExpenses();
+      setTravelGroups(res.data);
+    } catch (error) {
+      console.error('Error fetching expenses:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div>

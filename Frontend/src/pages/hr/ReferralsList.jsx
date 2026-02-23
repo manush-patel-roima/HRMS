@@ -16,8 +16,8 @@ const ReferralsList = () => {
     try {
       const res = await JobService.listAllReferrals();
       setReferrals(res.data);
-    } catch {
-      alert("Failed to load referrals");
+    } catch (error) {
+      console.error('Error fetching referrals:', error);
     } finally {
       setLoading(false);
     }
@@ -26,10 +26,9 @@ const ReferralsList = () => {
   const updateStatus = async (id, status) => {
     try {
       await JobService.updateReferralStatus(id, { status });
-      alert("Status updated");
       fetchReferrals();
-    } catch {
-      alert("Failed to update status");
+    } catch (error) {
+      console.error('Error updating referral status:', error);
     }
   };
 

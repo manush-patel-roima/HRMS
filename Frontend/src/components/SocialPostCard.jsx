@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import socialService from '../services/social/socialService';
-import { handleApiError } from '../utils/errorHandler';
 
 export default function SocialPostCard({post, currentUser, onDeleted, onUpdated}){
   const [liked, setLiked] = useState(post.likedByCurrentUser);
@@ -19,7 +18,7 @@ export default function SocialPostCard({post, currentUser, onDeleted, onUpdated}
       setLiked(!liked);
       setLikes(liked? likes-1 : likes+1);
     }catch(err){
-      handleApiError(err);
+      console.error('Error toggling like:', err);
     }
   }
 
@@ -33,7 +32,7 @@ export default function SocialPostCard({post, currentUser, onDeleted, onUpdated}
       setCommentText('');
       setShowComments(true);
     }catch(err){
-      handleApiError(err);
+      console.error('Error adding comment:', err);
     }
   }
 
@@ -54,7 +53,7 @@ export default function SocialPostCard({post, currentUser, onDeleted, onUpdated}
       setShowEditModal(false);
       if(onUpdated) onUpdated(updatedPost);
     } catch(err) {
-      handleApiError(err);
+      console.error('Error editing post:', err);
     } finally {
       setIsLoading(false);
     }
@@ -67,7 +66,7 @@ export default function SocialPostCard({post, currentUser, onDeleted, onUpdated}
       await socialService.deletePost(post.id);
       if(onDeleted) onDeleted(post.id);
     } catch(err) {
-      handleApiError(err);
+      console.error('Error deleting post:', err);
     } finally {
       setIsLoading(false);
     }
@@ -81,7 +80,7 @@ export default function SocialPostCard({post, currentUser, onDeleted, onUpdated}
       post.comments = post.comments.filter(c => c.id !== commentId);
       post.commentCount = post.commentCount - 1;
     } catch(err) {
-      handleApiError(err);
+      console.error('Error deleting comment:', err);
     } finally {
       setIsLoading(false);
     }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import GameService from "../../services/games/gameService";
 import { useNavigate } from "react-router-dom";
+import { showWarningToast } from "../../utils/toastUtils";
 
 const GameConfig = () => {
 
@@ -42,7 +43,7 @@ const GameConfig = () => {
         startHour: res.data.startHour,
         endHour: res.data.endHour
       });
-    } catch {
+    } catch (error) {
       setForm({
         slotDurationMinutes: "",
         minPlayers: "",
@@ -50,6 +51,7 @@ const GameConfig = () => {
         startHour: "",
         endHour: ""
       });
+      console.error('Error loading config:', error);
     }
   };
 
@@ -70,12 +72,12 @@ const GameConfig = () => {
   const saveConfig = async () => {
 
     if (!selectedGame) {
-      alert("Please select a game");
+      showWarningToast("Please select a game");
       return;
     }
 
     if (form.minPlayers > form.maxPlayers) {
-      alert("Min players cannot be greater than Max players");
+      showWarningToast("Min players cannot be greater than Max players");
       return;
     }
 
@@ -87,10 +89,8 @@ const GameConfig = () => {
         ...form
       });
 
-      alert("Configuration Saved Successfully");
     } catch (error) {
       console.error("Error saving config", error);
-      alert("Error saving configuration");
     } finally {
       setLoading(false);
     }

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import JobService from "../services/jobs/jobService";
+import { showWarningToast } from "../utils/toastUtils";
 
 const ShareJobModal = ({ job, onClose }) => {
 
@@ -16,7 +17,7 @@ const ShareJobModal = ({ job, onClose }) => {
     const emailList = emails.split(",").map(e => e.trim());
 
     if (!validateEmails(emailList)) {
-      alert("Invalid email format");
+      showWarningToast("Invalid email format");
       return;
     }
 
@@ -28,12 +29,10 @@ const ShareJobModal = ({ job, onClose }) => {
         recipientEmails: emailList
       });
 
-      alert("Job shared successfully");
       onClose();
 
     } catch (err) {
-      alert("Failed to share job");
-      console.log(err.response || err.response.message || err.message)
+      console.error('Share job error:', err);
     } finally {
       setLoading(false);
     }

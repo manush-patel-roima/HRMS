@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import JobService from "../../services/jobs/jobService";
+import { showWarningToast } from "../../utils/toastUtils";
 
 const CreateJob = () => {
 
@@ -20,7 +21,7 @@ const CreateJob = () => {
   const handleSubmit = async () => {
 
     if (!title || !description) {
-      alert("Title and Description are required");
+      showWarningToast("Title and Description are required");
       return;
     }
 
@@ -29,7 +30,7 @@ const CreateJob = () => {
       : [];
 
     if (reviewerList.length && !validateEmails(reviewerList)) {
-      alert("Invalid reviewer email format");
+      showWarningToast("Invalid reviewer email format");
       return;
     }
 
@@ -46,7 +47,7 @@ const CreateJob = () => {
 
     if (jdFile) {
       if (jdFile.type !== "application/pdf") {
-        alert("Only PDF JD allowed");
+        showWarningToast("Only PDF JD allowed");
         return;
       }
       formData.append("jdFile", jdFile);
@@ -55,10 +56,9 @@ const CreateJob = () => {
     try {
       setLoading(true);
       await JobService.createJob(formData);
-      alert("Job created successfully");
       navigate("/hr/jobs");
-    } catch {
-      alert("Job creation failed");
+    } catch (error) {
+      console.error('Error creating job:', error);
     } finally {
       setLoading(false);
     }

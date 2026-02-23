@@ -1,4 +1,5 @@
 import axiosInstance from "../../api/axiosInstance";
+import { showSuccessToast } from "../../utils/toastUtils";
 
 class JobService {
 
@@ -9,20 +10,32 @@ class JobService {
   static createJob(formData) {
     return axiosInstance.post("/api/jobs", formData, {
       headers: { "Content-Type": "multipart/form-data" }
+    }).then(res => {
+      showSuccessToast('Job created successfully!');
+      return res;
     });
   }
 
   static deactivateJob(jobId) {
-    return axiosInstance.put(`/api/jobs/${jobId}/deactivate`);
+    return axiosInstance.put(`/api/jobs/${jobId}/deactivate`).then(res => {
+      showSuccessToast('Job deactivated successfully!');
+      return res;
+    });
   }
 
   static shareJob(data) {
-    return axiosInstance.post("/api/jobs/share", data);
+    return axiosInstance.post("/api/jobs/share", data).then(res => {
+      showSuccessToast('Job shared successfully!');
+      return res;
+    });
   }
 
   static referJob(formData) {
     return axiosInstance.post("/api/jobs/refer", formData, {
       headers: { "Content-Type": "multipart/form-data" }
+    }).then(res => {
+      showSuccessToast('Job referral submitted successfully!');
+      return res;
     });
   }
 
@@ -35,7 +48,10 @@ class JobService {
   }
 
   static updateReferralStatus(id, data) {
-    return axiosInstance.put(`/api/jobs/referrals/${id}`, data);
+    return axiosInstance.put(`/api/jobs/referrals/${id}`, data).then(res => {
+      showSuccessToast('Referral status updated successfully!');
+      return res;
+    });
   }
 }
 

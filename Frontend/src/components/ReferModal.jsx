@@ -1,5 +1,6 @@
 import { useState } from "react";
 import JobService from "../services/jobs/jobService";
+import { showWarningToast } from "../utils/toastUtils";
 
 const ReferModal = ({ job, onClose }) => {
 
@@ -12,12 +13,12 @@ const ReferModal = ({ job, onClose }) => {
   const handleRefer = async () => {
 
     if (!cvFile) {
-      alert("CV is required (PDF only)");
+      showWarningToast("CV is required (PDF only)");
       return;
     }
 
     if (cvFile.type !== "application/pdf") {
-      alert("Only PDF allowed");
+      showWarningToast("Only PDF allowed");
       return;
     }
 
@@ -37,10 +38,9 @@ const ReferModal = ({ job, onClose }) => {
     try {
       setLoading(true);
       await JobService.referJob(formData);
-      alert("Referral submitted successfully");
       onClose();
     } catch (err) {
-      alert("Referral failed");
+      console.error('Referral error:', err);
     } finally {
       setLoading(false);
     }

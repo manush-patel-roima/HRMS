@@ -11,7 +11,6 @@ const InfoRow = ({label, value}) => (
 const Dashboard = () => {
     const [employee, setEmployee] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
 
     useEffect(() => {
         let mounted = true;
@@ -20,12 +19,11 @@ const Dashboard = () => {
             .then(res => {
                 if(mounted){
                     setEmployee(res.data);
-                    setError(null);
                 }
             })
             .catch(err => {
                 if(mounted){
-                    setError(err.response?.data?.message || err.message || 'Failed to load');
+                    console.error('Error loading dashboard:', err);
                 }
             })
             .finally(() => mounted && setLoading(false));
@@ -39,9 +37,9 @@ const Dashboard = () => {
         </div>
     );
 
-    if (error) return (
+    if (!employee) return (
         <div className="min-h-[60vh] p-6 bg-gray-50">
-            <div className="max-w-4xl mx-auto bg-white rounded-lg shadow p-6 text-red-600">{error}</div>
+            <div className="max-w-4xl mx-auto bg-white rounded-lg shadow p-6">Unable to load employee data. Please try again.</div>
         </div>
     );
 

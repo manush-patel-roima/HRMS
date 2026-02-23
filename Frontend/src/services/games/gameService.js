@@ -1,38 +1,53 @@
 import axiosInstance from "../../api/axiosInstance";
+import { showSuccessToast } from "../../utils/toastUtils";
 
-class GameService{
+class GameService {
 
   static getGames = () => {
     return axiosInstance.get("/api/games/games");
   }
 
   static toggleInterest = (gameId) => {
-    return axiosInstance.post(`/api/games/interest/${gameId}`);
+    return axiosInstance.post(`/api/games/interest/${gameId}`).then(res => {
+      showSuccessToast('Interest updated successfully!');
+      return res;
+    });
   }
 
-  static getUpcomingSlots = (gameId) =>{
+  static getUpcomingSlots = (gameId) => {
     return axiosInstance.get(`/api/games/upcoming-slots/${gameId}`);
-  }  
+  }
 
   static bookSlot = (data) => {
-    return axiosInstance.post("/api/games/book", data);
+    return axiosInstance.post("/api/games/book", data).then(res => {
+      showSuccessToast('Booking request submitted successfully!');
+      return res;
+    });
   }
-  static getMyBookings = () =>{
+
+  static getMyBookings = () => {
     return axiosInstance.get("/api/games/my-bookings");
   }
-  static cancelBooking = (bookingGroupId) =>{
-    return axiosInstance.post(`/api/games/cancel/${bookingGroupId}`);
+
+  static cancelBooking = (bookingGroupId) => {
+    return axiosInstance.post(`/api/games/cancel/${bookingGroupId}`).then(res => {
+      showSuccessToast('Booking cancelled successfully!');
+      return res;
+    });
   }
 
   static saveConfig = (data) => {
-    return axiosInstance.post("/api/games/config",data);
+    return axiosInstance.post("/api/games/config", data).then(res => {
+      showSuccessToast('Game configuration saved successfully!');
+      return res;
+    });
   }
 
   static getConfig = (gameId) => {
     return axiosInstance.get(`/api/games/config/${gameId}`);
   }
-  
-  static getSlotMonitor = () =>{
+
+  static getSlotMonitor = () => {
     return axiosInstance.get("/api/games/monitor");
   }
 

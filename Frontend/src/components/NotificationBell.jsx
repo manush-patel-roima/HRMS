@@ -35,8 +35,8 @@ const NotificationBell = () => {
             try{
                 const res = await axios.get('/api/notifications');
                 if(mountedRef.current) setNotifications(res.data);
-            }catch(err){ 
-                console.log(err);
+            }catch(err){
+                if(mountedRef.current) console.error('Error fetching notifications:', err);
             }
         };
 
@@ -44,8 +44,8 @@ const NotificationBell = () => {
             try{
                 const res = await axios.get('/api/notifications/unread-count');
                 if(mountedRef.current) setUnreadCount(res.data || 0);
-            }catch(err){ 
-                console.log(err);
+            }catch(err){
+                if(mountedRef.current) console.error('Error fetching unread count:', err);
             }
         };
 
@@ -70,7 +70,9 @@ const NotificationBell = () => {
             setNotifications(prev => prev.map(x => x.id === n.id ? {...x, isRead:true} : x));
             setUnreadCount(c => Math.max(0, (c || 0) - 1));
             if(n.linkUrl) window.location.href = n.linkUrl;
-        }catch(err){ console.error(err); }
+        }catch(err){
+            console.error('Error marking notification as read:', err);
+        }
     };
 
     return (

@@ -1,4 +1,5 @@
 import axiosInstance from "../../api/axiosInstance";
+import { showSuccessToast } from "../../utils/toastUtils";
 
 class TravelService {
   static getTravels(){ 
@@ -6,7 +7,10 @@ class TravelService {
   }
 
   static createTravel(data) {
-    return axiosInstance.post("/api/travels", data);
+    return axiosInstance.post("/api/travels", data).then(res => {
+      showSuccessToast('Travel created successfully!');
+      return res;
+    });
   }
 
   static uploadDocument(formData) {

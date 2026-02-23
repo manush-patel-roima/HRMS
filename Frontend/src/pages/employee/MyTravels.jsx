@@ -4,10 +4,23 @@ import TravelCard from "../../components/TravelCard";
 
 const MyTravels = () => {
   const [travels, setTravels] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    TravelService.getTravels().then(res => setTravels(res.data));
+    fetchTravels();
   }, []);
+
+  const fetchTravels = async () => {
+    setLoading(true);
+    try {
+      const res = await TravelService.getTravels();
+      setTravels(res.data);
+    } catch (error) {
+      console.error('Error fetching travels:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div>

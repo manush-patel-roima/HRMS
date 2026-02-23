@@ -16,8 +16,8 @@ const MyReferrals = () => {
     try {
       const res = await JobService.listMyReferrals();
       setReferrals(res.data);
-    } catch {
-      alert("Failed to load referrals");
+    } catch (error) {
+      console.error('Error fetching referrals:', error);
     } finally {
       setLoading(false);
     }

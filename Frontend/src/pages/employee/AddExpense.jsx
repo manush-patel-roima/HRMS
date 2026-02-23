@@ -1,46 +1,49 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ExpenseService from "../../services/expense/expenseService";
+import { showWarningToast } from "../../utils/toastUtils";
 
 const AddExpense = () => {
 
-  const [assignedTravels,setAssignedTravels] = useState([]);
+  const [assignedTravels, setAssignedTravels] = useState([]);
   const [travelId, setTravelId] = useState("");
   const [category, setCategory] = useState("");
   const [amount, setAmount] = useState("");
   const [expenseDate, setExpenseDate] = useState("");
   const [proofs, setProofs] = useState([]);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(()=>{
+  useEffect(() => {
     ExpenseService.getAssignedTravels()
-      .then(res=>setAssignedTravels(res.data));
-  },[]);
+      .then(res => setAssignedTravels(res.data))
+      .catch(err => console.error('Error fetching travels:', err));
+  }, []);
 
   const handleSubmit = async () => {
 
-    if(!travelId){
-      alert("Please select a travel");
+    if (!travelId) {
+      showWarningToast("Please select a travel");
       return;
     }
 
-    if(!amount){
-      alert("Amount required");
+    if (!amount) {
+      showWarningToast("Amount required");
       return;
     }
 
-    if(!expenseDate){
-      alert("Expense date required");
+    if (!expenseDate) {
+      showWarningToast("Expense date required");
       return;
     }
 
-    if(!category){
-      alert("Category required");
+    if (!category) {
+      showWarningToast("Category required");
       return;
     }
 
     if (proofs.length === 0) {
-      alert("At least one proof is required");
+      showWarningToast("At least one proof is required");
       return;
     }
 
@@ -54,15 +57,15 @@ const AddExpense = () => {
       formData.append("proofs", file);
     });
 
-    try{
-        await ExpenseService.createDraft(formData);
-        alert("Draft created successfully");
-        navigate("/expenses");
-    } catch(error){
-        console.log(error.response.data || error.response.data.message || error.message);
-        alert("Failed to save draft");
+    setLoading(true);
+    try {
+      await ExpenseService.createDraft(formData);
+      navigate("/expenses");
+    } catch (error) {
+      console.error('Error creating expense:', error);
+    } finally {
+      setLoading(false);
     }
-    
   };
 
   return (

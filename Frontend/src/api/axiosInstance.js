@@ -14,7 +14,7 @@ axiosInstance.interceptors.request.use(
         const token = AuthService.getToken();
 
         if (token) {
-            if(AuthService.isTokenExpired(token)){
+            if (AuthService.isTokenExpired(token)) {
                 AuthService.logout();
                 window.location.href = '/login';
                 return Promise.reject(new Error("Token expired"));
@@ -31,26 +31,7 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
     (response) => response,
     (error) => {
-
-        if(error.response) {
-            const status = error.response.status;
-
-            if (status === 401) {
-                AuthService.logout();
-                window.location.href = '/login';
-            } else if (status === 403) {
-
-                handleApiError(error);
-            } else {
-
-                handleApiError(error);
-            }
-        } else {
-
-            handleApiError(error);
-        }
-
-        return Promise.reject(error);
+        return handleApiError(error);
     }
 );
 

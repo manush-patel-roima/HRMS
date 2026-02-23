@@ -1,4 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import Login from "./pages/auth/Login";
 import Dashboard from "./pages/common/Dashboard";
@@ -46,7 +48,6 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import AuthService from "./services/auth/authService";
 import SocialFeed from "./components/SocialFeed";
 import { ToastProvider } from "./context/ToastContext";
-import Toast from "./components/Toast";
 
 
 
@@ -398,7 +399,20 @@ function App() {
         <Route path="*" element={<Navigate to="/" replace />} />
 
       </Routes>
-      <Toast />
+
+      <ToastContainer
+        position="top-right"
+        autoClose={4000}
+        hideProgressBar={false}
+        newestOnTop={true}
+        closeOnClick={true}
+        rtl={false}
+        pauseOnFocusLoss={true}
+        draggable={true}
+        pauseOnHover={true}
+        theme="light"
+        limit={3}
+      />
     </Router>
     </ToastProvider>
   );

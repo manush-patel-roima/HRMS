@@ -31,7 +31,6 @@ const GameDashboard = () => {
       await GameService.toggleInterest(gameId);
       loadGames(); 
     } catch (error) {
-      console.log(error.response?.data?.message);
       console.error("Error toggling interest", error);
     }
   };
