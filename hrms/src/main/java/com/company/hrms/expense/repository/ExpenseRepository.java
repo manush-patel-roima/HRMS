@@ -1,6 +1,7 @@
 package com.company.hrms.expense.repository;
 
 import com.company.hrms.expense.entity.Expense;
+import com.company.hrms.expense.entity.ExpenseProof;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -11,6 +12,10 @@ public interface ExpenseRepository extends JpaRepository<Expense, Integer> {
 
     List<Expense> findByEmployee_EmployeeId(Integer employeeId);
     List<Expense> findByEmployee_Manager_EmployeeId(Integer managerId);
+
+    List<Expense> findByTravelPlan_TravelId(Integer travelId);
+    List<Expense> findByTravelPlan_TravelIdAndEmployee_EmployeeId(Integer travelId,Integer employeeId);
+    void deleteByTravelPlan_TravelId(Integer travelId);
 
     @Query("""
           SELECT e FROM Expense e
@@ -27,6 +32,11 @@ public interface ExpenseRepository extends JpaRepository<Expense, Integer> {
             Integer travelId,
             LocalDate fromDate,
             LocalDate toDate
+    );
+
+    void deleteByTravelPlan_TravelIdAndEmployee_EmployeeId(
+            Integer travelId,
+            Integer employeeId
     );
 
 }

@@ -22,35 +22,35 @@ const DocumentTable = ({ travelId }) => {
   };
 
   return (
-    <div className="bg-white p-4 rounded shadow">
-      <h3 className="font-semibold mb-2">Documents</h3>
-      <table className="w-full text-sm">
+    <div className="bg-white p-4 rounded shadow animation duration-500 ease-in-out hover:shadow-xl hover:scale-100 hover:-translate-y-0.5 hover:-translate-x-0.5">
+      <h3 className="text-lg font-medium mb-2">Documents</h3>
+      <table className="w-full border-1">
         <thead>
           <tr className="border-b">
-            <th>File</th>
-            <th>Type</th>
-            <th>Owner</th>
-            <th>Uploaded By</th>
-            <th>For Whom</th>
+            <th className="border-r">File</th>
+            <th className="border-r">Type</th>
+            <th className="border-r">Owner</th>
+            <th className="border-r">Uploaded By</th>
+            <th className="border-r">For Whom</th>
           </tr>
         </thead>
         <tbody>
           {docs.map(d => (
             <tr key={d.documentId}>
-              <td>
+              <td className="pl-2 border-r">
                 <a
                   href={d.fileUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-blue-600 underline"
+                  className="text-blue-600 hover:underline"
                 >
                   {d.fileName}
                 </a>
               </td>
-              <td>{d.documentType}</td>
-              <td>{d.ownerType}</td>
-              <td>{d.uploadedBy}</td>
-              <td>{d.selectedEmployee}</td>
+              <td className="pl-2 border-r">{d.documentType}</td>
+              <td className="pl-2 border-r">{d.ownerType}</td>
+              <td className="pl-2 border-r">{d.uploadedBy}</td>
+              <td className="pl-2 border-r">{d.selectedEmployee}</td>
             </tr>
           ))}
         </tbody>

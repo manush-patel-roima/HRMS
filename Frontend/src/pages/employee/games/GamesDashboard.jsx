@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import GameService from "../../services/games/gameService";
+import GameService from "../../../services/games/gameService";
 import MyBookings from "./MyBookings";
 
 const GameDashboard = () => {
@@ -41,7 +41,7 @@ const GameDashboard = () => {
 
   return (
     <div>
-      <h2 className="text-xl font-bold mb-6">
+      <h2 className="text-2xl text-slate-700 font-bold mb-6">
         Game Dashboard
       </h2>
 
@@ -50,7 +50,7 @@ const GameDashboard = () => {
         {games.map(game => (
           <div
             key={game.gameId}
-            className="border p-5 rounded shadow bg-white"
+            className="border p-5 rounded shadow bg-white animation duration-500 ease-in-out hover:shadow-xl hover:scale-100 hover:-translate-y-0.5 hover:-translate-x-0.5"
           >
             <h3 className="text-lg font-semibold mb-2">
               {game.gameName}
@@ -69,7 +69,7 @@ const GameDashboard = () => {
             <div className="flex gap-2">
               <button
                 onClick={() => toggleInterest(game.gameId)}
-                className="bg-gray-600 text-white px-3 py-1 rounded"
+                className="bg-gray-600 text-white px-3 py-1 rounded cursor-pointer animation duration-500 ease-in-out hover:shadow-xl hover:scale-100 hover:-translate-y-0.5 "
               >
                 Change Interest
               </button>
@@ -79,7 +79,7 @@ const GameDashboard = () => {
                 onClick={() =>
                   navigate(`/games/${game.gameId}/slots`)
                 }
-                className="bg-blue-600 text-white px-3 py-1 rounded disabled:bg-gray-400"
+                className="bg-blue-600 text-white px-3 py-1 rounded cursor-pointer disabled:bg-gray-400 animation duration-500 ease-in-out hover:shadow-xl hover:scale-100 hover:-translate-y-0.5 "
               >
                 Book Slot
               </button>

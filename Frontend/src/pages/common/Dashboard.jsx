@@ -44,7 +44,7 @@ const Dashboard = () => {
     );
 
     return (
-        <div className="min-h-[60vh] p-6 bg-gray-50">
+        <div className="h-screen p-6 bg-gray-100">
             <div className="max-w-5xl mx-auto">
                 <header className="flex items-center justify-between mb-6">
                     <div>

@@ -37,6 +37,21 @@ class TravelService {
     return axiosInstance.get("/api/employees");
   }
 
+  static deleteTravel(id) {
+      return axiosInstance.delete(`/api/travels/${id}`).then(res => {
+        showSuccessToast('Travel deleted successfully!');
+        return res;
+      });
+  }
+
+  static updateTravel(id, data) {
+    return axiosInstance.put(`/api/travels/${id}`, data);
+  }
+
+  static travelDetails(id) {
+    return axiosInstance.get(`/api/travels/travel/${id}`);
+  }
+
 }
 
 export default TravelService;

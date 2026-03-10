@@ -111,6 +111,8 @@ public class SocialService {
         return mapper.toDto(saved, authorId);
     }
 
+
+
     public Page<SocialPostDto> feed(Integer currentEmployeeId, int page, int size, Integer authorFilter, String tagFilter, LocalDate fromDate, LocalDate toDate){
         PageRequest pr = PageRequest.of(page,size);
         Page<SocialPost> posts;
@@ -153,10 +155,14 @@ public class SocialService {
         return new org.springframework.data.domain.PageImpl<>(filtered, pr, filtered.size());
     }
 
+
+
     public SocialPostDto getPost(Long postId, Integer currentEmployeeId){
         SocialPost p = postRepo.findById(postId).orElseThrow(()-> new ResourceNotFoundException("Post not found"));
         return mapper.toDto(p, currentEmployeeId);
     }
+
+
 
     @Transactional
     public SocialCommentDto addComment(Long postId, String text, Integer commenterId){
@@ -179,6 +185,8 @@ public class SocialService {
         return mapper.toCommentDto(saved);
     }
 
+
+
     @Transactional
     public SocialCommentDto editComment(Long commentId, String text, Integer requesterId){
         SocialComment c = commentRepo.findById(commentId).orElseThrow(()-> new ResourceNotFoundException("Comment not found"));
@@ -189,6 +197,8 @@ public class SocialService {
         SocialComment saved = commentRepo.save(c);
         return mapper.toCommentDto(saved);
     }
+
+
 
     @Transactional
     public void deleteComment(Long commentId, Integer requesterId, boolean isHr){
@@ -206,6 +216,8 @@ public class SocialService {
         }
     }
 
+
+
     @Transactional
     public void deletePost(Long postId, Integer requesterId, boolean isHr){
         SocialPost p = postRepo.findById(postId).orElseThrow(()-> new ResourceNotFoundException("Post not found"));
@@ -221,6 +233,8 @@ public class SocialService {
         }
     }
 
+
+
     @Transactional
     public SocialPostDto editPost(Long postId, CreateSocialPostRequest req, Integer requesterId){
         SocialPost p = postRepo.findById(postId).orElseThrow(()-> new ResourceNotFoundException("Post not found"));
@@ -233,6 +247,8 @@ public class SocialService {
         SocialPost saved = postRepo.save(p);
         return mapper.toDto(saved, requesterId);
     }
+
+
 
     @Transactional
     public boolean toggleLike(Long postId, Integer employeeId){
@@ -254,6 +270,8 @@ public class SocialService {
             return true;
         }
     }
+
+
 
     @Transactional
     public void generateDailyCelebrationPosts(){

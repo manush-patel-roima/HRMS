@@ -13,17 +13,17 @@ const Navbar = () => {
   }
 
   return (
-    <div className="h-14 bg-white shadow flex items-center justify-between px-6">
-      <h1 className="text-xl font-bold text-blue-600">HRMS</h1>
+    <div className="h-14 bg-sky-100 shadow flex items-center justify-between px-6">
+      <h1 className="font-bold text-2xl text-slate-700">HRMS</h1>
 
       <div className="flex items-center gap-6 relative">
         <NotificationBell />
 
-        <span className="text-gray-600">{role}</span>
+        <span className="text-slate-700 font-bold">{role}</span>
 
         <button
           onClick={handleLogout}
-          className="text-red-600 font-medium"
+          className="text-red-800 font-bold rounded-full border-2 border-red px-2 py-1 bg-red-200 hover:bg-red-300"
         >
           Logout
         </button>

@@ -8,6 +8,9 @@ import com.company.hrms.common.service.EmailService;
 import com.company.hrms.common.util.CloudinaryService;
 import com.company.hrms.employee.entity.Employee;
 import com.company.hrms.employee.repository.EmployeeRepository;
+import com.company.hrms.expense.entity.Expense;
+import com.company.hrms.expense.entity.ExpenseProof;
+import com.company.hrms.expense.repository.ExpenseRepository;
 import com.company.hrms.notification.NotificationSocketService;
 import com.company.hrms.travel.dto.*;
 import com.company.hrms.travel.entity.TravelDocument;
@@ -28,6 +31,7 @@ public class TravelService {
     private final TravelPlanRepository travelPlanRepo;
     private final TravelEmployeeRepository travelEmployeeRepo;
     private final TravelDocumentRepository travelDocumentRepo;
+    private final ExpenseRepository expenseRepo;
     private final EmployeeRepository employeeRepo;
     private final EmailService emailService;
     private final NotificationSocketService socketService;
@@ -37,6 +41,7 @@ public class TravelService {
             TravelPlanRepository travelPlanRepo,
             TravelEmployeeRepository travelEmployeeRepo,
             TravelDocumentRepository travelDocumentRepo,
+            ExpenseRepository expenseRepo,
             EmployeeRepository employeeRepo,
             EmailService emailService,
             NotificationSocketService socketService,
@@ -47,6 +52,7 @@ public class TravelService {
         this.travelPlanRepo=travelPlanRepo;
         this.travelEmployeeRepo=travelEmployeeRepo;
         this.travelDocumentRepo=travelDocumentRepo;
+        this.expenseRepo=expenseRepo;
         this.employeeRepo=employeeRepo;
         this.emailService=emailService;
         this.socketService=socketService;
@@ -341,4 +347,232 @@ public class TravelService {
                 ))
                 .toList();
     }
+
+    @Transactional
+    public void deleteTravel(Integer travelId, Integer loggedInUserId){
+
+        Employee loggedInUser = employeeRepo.findById(loggedInUserId)
+                .orElseThrow(()-> new ResourceNotFoundException("User not found"));
+
+        if(!loggedInUser.getRole().getRoleName().equals("HR"))
+        {
+            throw new ForbiddenException("Only HR can delete travel");
+        }
+
+        TravelPlan travel = travelPlanRepo.findById(travelId)
+                .orElseThrow(()-> new ResourceNotFoundException("Travel not found"));
+
+        List<TravelDocument> documents = travelDocumentRepo.findByTravelPlan_TravelId(travelId);
+
+        for(TravelDocument document : documents){
+            cloudinaryService.deleteTravelDocument(document.getFileUrl());
+        }
+
+        List<Expense> expenses = expenseRepo.findByTravelPlan_TravelId(travelId);
+
+        for(Expense expense : expenses){
+            for(ExpenseProof proof : expense.getProofs()){
+                cloudinaryService.deleteExpenseProof(proof.getFileUrl());
+            }
+        }
+
+        expenseRepo.deleteByTravelPlan_TravelId(travelId);
+
+        travelPlanRepo.delete(travel);
+    }
+
+
+    @Transactional
+    public TravelResponse updateTravel(Integer travelId, UpdateTravelRequest request, Integer loggedInUserId) {
+
+        Employee employee = employeeRepo.findById(loggedInUserId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (!employee.getRole().getRoleName().equals("HR")) {
+            throw new ForbiddenException("Only HR can update travel");
+        }
+
+        TravelPlan travel = travelPlanRepo.findById(travelId)
+                .orElseThrow(() -> new ResourceNotFoundException("Travel not found"));
+
+        if (request.getStartDate().isAfter(request.getEndDate())) {
+            throw new ValidationException("Start date cannot be after end date");
+        }
+
+        List<TravelEmployee> overlapping = travelEmployeeRepo.findOverlappingTravelsForUpdate(
+                request.getEmployeeIds(),
+                travelId,
+                request.getStartDate(),
+                request.getEndDate()
+        );
+
+        if (!overlapping.isEmpty()) {
+            throw new BusinessRuleViolationException("One or more selected employees already have a travel during this period");
+        }
+
+        travel.setTitle(request.getTitle());
+        travel.setStartDate(request.getStartDate());
+        travel.setEndDate(request.getEndDate());
+
+
+//        List<Integer> existingEmployeeIds = travel.getEmployees()
+//                .stream()
+//                .map(te -> te.getEmployee().getEmployeeId())
+//                .toList();
+//
+//        List<Integer> newEmployeeIds = request.getEmployeeIds();
+//
+//
+//        //adding new employees
+//        List<Integer> added = newEmployeeIds
+//                .stream()
+//                .filter(id -> !existingEmployeeIds.contains(id))
+//                .toList();
+//
+//        for (Integer empId : added) {
+//            Employee emp = employeeRepo.findById(empId)
+//                    .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
+//
+//            TravelEmployee te = new TravelEmployee();
+//            te.setEmployee(emp);
+//            te.setTravelPlan(travel);
+//            travelEmployeeRepo.save(te);
+//        }
+//
+//
+//        //removing employees and associated records
+//        List<Integer> removed = existingEmployeeIds
+//                .stream()
+//                .filter(id -> !newEmployeeIds.contains(id))
+//                .toList();
+//
+//        for(Integer empId : removed){
+//
+//            List<TravelDocument> documents = travelDocumentRepo.findByTravelPlan_TravelIdAndEmployee_EmployeeId(travelId,empId);
+//
+//            for(TravelDocument document : documents){
+//                cloudinaryService.deleteTravelDocument(document.getFileUrl());
+//            }
+//
+//            List<Expense> expenses = expenseRepo.findByTravelPlan_TravelIdAndEmployee_EmployeeId(travelId,empId);
+//
+//            for(Expense expense : expenses){
+//                for(ExpenseProof proof : expense.getProofs()){
+//                    cloudinaryService.deleteExpenseProof(proof.getFileUrl());
+//                }
+//            }
+//            expenseRepo.deleteByTravelPlan_TravelIdAndEmployee_EmployeeId(travelId, empId);
+//            travelDocumentRepo.deleteByTravelPlan_TravelIdAndEmployee_EmployeeId(travelId, empId);
+//            travelEmployeeRepo.deleteByTravelPlan_TravelIdAndEmployee_EmployeeId(travelId, empId);
+//
+//        }
+//
+//        TravelPlan saved = travelPlanRepo.save(travel);
+
+        List<Integer> existingEmployeeIds = travel.getEmployees()
+                .stream()
+                .map(te -> te.getEmployee().getEmployeeId())
+                .toList();
+
+        List<Integer> newEmployeeIds = request.getEmployeeIds();
+
+        travel.getEmployees().removeIf(te-> !newEmployeeIds.contains(te.getEmployee().getEmployeeId()));
+
+        List<Integer> currentEmployeeIds = travel.getEmployees()
+                .stream()
+                .map(te->te.getEmployee().getEmployeeId())
+                .toList();
+
+        List<Integer> removedIds = existingEmployeeIds.stream()
+                .filter(id -> !newEmployeeIds.contains(id))
+                .toList();
+
+        for(Integer empId : removedIds) {
+
+            List<TravelDocument> docsToRemove = travel.getDocuments().stream()
+                    .filter(doc -> doc.getEmployee().getEmployeeId().equals(empId))
+                    .toList();
+
+            for(TravelDocument doc : docsToRemove){
+                cloudinaryService.deleteTravelDocument(doc.getFileUrl());
+                travel.getDocuments().remove(doc);
+            }
+
+//            List<TravelDocument> documents = travelDocumentRepo.findByTravelPlan_TravelId(travelId);
+//            for (TravelDocument document : documents) {
+//                cloudinaryService.deleteTravelDocument(document.getFileUrl());
+//            }
+//            travelDocumentRepo.deleteByTravelPlan_TravelIdAndEmployee_EmployeeId(travelId, empId);
+
+
+            List<Expense> expenses = expenseRepo.findByTravelPlan_TravelIdAndEmployee_EmployeeId(travelId,empId);
+            for (Expense expense : expenses) {
+                for (ExpenseProof proof : expense.getProofs()) {
+                    cloudinaryService.deleteExpenseProof(proof.getFileUrl());
+                }
+            }
+            expenseRepo.deleteByTravelPlan_TravelIdAndEmployee_EmployeeId(travelId, empId);
+
+//            travelEmployeeRepo.deleteByTravelPlan_TravelIdAndEmployee_EmployeeId(travelId, empId);
+        }
+
+//        travel.getEmployees().removeIf(te -> removedIds.contains(te.getEmployee().getEmployeeId()));
+//        travel.getDocuments().removeIf(doc -> removedIds.contains(doc.getEmployee().getEmployeeId()));
+
+        List<Integer> addedIds = newEmployeeIds.stream()
+                .filter(id -> !existingEmployeeIds.contains(id))
+                .toList();
+
+        for(Integer empId : addedIds){
+            Employee emp = employeeRepo.findById(empId)
+                    .orElseThrow(()-> new ResourceNotFoundException("Employee not found"));
+
+            TravelEmployee te = new TravelEmployee();
+            te.setEmployee(emp);
+            te.setTravelPlan(travel);
+            travelEmployeeRepo.save(te);
+        }
+
+
+        TravelPlan saved = travelPlanRepo.save(travel);
+
+
+        return new TravelResponse(
+                saved.getTravelId(),
+                saved.getTitle(),
+                saved.getStartDate(),
+                saved.getEndDate(),
+                saved.getCreatedByHR().getFullName(),
+                saved.getEmployees().stream()
+                        .map(te->new EmployeeSummary(
+                                te.getEmployee().getEmployeeId(),
+                                te.getEmployee().getFullName()
+                        ))
+                        .toList()
+        );
+    }
+
+
+    public TravelResponse travelDetails(Integer travelId, Integer loggedInUserId) {
+        Employee loggedInUser = employeeRepo.findById(loggedInUserId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        TravelPlan travel = travelPlanRepo.findById(travelId)
+                .orElseThrow(() -> new ResourceNotFoundException("Travel not found"));
+
+        return new TravelResponse(
+                travel.getTravelId(),
+                travel.getTitle(),
+                travel.getStartDate(),
+                travel.getEndDate(),
+                travel.getCreatedByHR().getFullName(),
+                travel.getEmployees().stream()
+                        .map(te -> new EmployeeSummary(
+                                te.getEmployee().getEmployeeId(),
+                                te.getEmployee().getFullName()
+                        ))
+                        .toList()
+        );
+    }
+
 }

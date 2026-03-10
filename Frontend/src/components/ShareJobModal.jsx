@@ -42,7 +42,7 @@ const ShareJobModal = ({ job, onClose }) => {
     <div className="fixed inset-0 bg-sky-900 bg-opacity-40 flex justify-center items-center">
       <div className="bg-white p-6 rounded w-96">
 
-        <h3 className="font-semibold mb-3">Share Job</h3>
+        <h3 className="text-xl font-semibold mb-3">Share Job</h3>
 
         <input
           className="border p-2 w-full mb-3"
@@ -52,11 +52,11 @@ const ShareJobModal = ({ job, onClose }) => {
         />
 
         <div className="flex justify-end gap-2">
-          <button onClick={onClose}>Cancel</button>
+          <button className="border-1 p-2 rounded text-md font-medium animation duration-500 ease-in-out hover:shadow-xl hover:scale-100 hover:-translate-y-0.5 hover:-translate-x-0.5" onClick={onClose}>Cancel</button>
           <button
             disabled={loading}
             onClick={handleShare}
-            className="bg-blue-600 text-white px-4 py-2 rounded"
+            className="bg-blue-600 text-white p-2 rounded text-md font-medium animation duration-500 ease-in-out hover:shadow-xl hover:scale-100 hover:-translate-y-0.5 hover:-translate-x-0.5"
           >
             {loading ? "Sharing..." : "Share"}
           </button>

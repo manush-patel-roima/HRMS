@@ -7,5 +7,7 @@ import java.util.List;
 
 public interface TravelDocumentRepository extends JpaRepository<TravelDocument,Integer> {
     List<TravelDocument> findByTravelPlan_TravelId(Integer travelId);
-    List<TravelDocument> findByEmployee_EmployeeId(Integer employeeId);
+    List<TravelDocument> findByTravelPlan_TravelIdAndEmployee_EmployeeId(Integer travelId,Integer employeeId);
+
+    void deleteByTravelPlan_TravelIdAndEmployee_EmployeeId(Integer travelId, Integer employeeId);
 }

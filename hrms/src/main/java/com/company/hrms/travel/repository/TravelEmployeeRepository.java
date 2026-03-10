@@ -22,4 +22,23 @@ public interface TravelEmployeeRepository extends JpaRepository<TravelEmployee,I
             LocalDate newStartDate,
             LocalDate newEndDate
     );
+
+    @Query("""
+          SELECT te FROM TravelEmployee te 
+          WHERE te.employee.employeeId IN :employeeIds
+          AND te.travelPlan.travelId  != :currentTravelId 
+          AND te.travelPlan.startDate <= :newEndDate
+          AND te.travelPlan.endDate >= :newStartDate
+    """)
+    List<TravelEmployee> findOverlappingTravelsForUpdate(
+            List<Integer> employeeIds,
+            Integer currentTravelId,
+            LocalDate newStartDate,
+            LocalDate newEndDate
+    );
+
+    void deleteByTravelPlan_TravelIdAndEmployee_EmployeeId(
+            Integer travelId,
+            Integer employeeId
+    );
 }

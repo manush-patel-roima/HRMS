@@ -15,21 +15,21 @@ public class GameScheduler {
     }
 
 
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 5 * * * *")
     public void runPendingAllocation() {
         service.processPendingAllocations();
     }
 
 
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 5 * * * *")
     public void closeSlots() {
         service.closeFinishedSlots();
     }
 
 
-    @Scheduled(cron = "0 15 12 * * *")
+    @Scheduled(cron = "0 0 22 * * *")
     public void generateDailySlots() {
-        System.out.println("Running TEMP slot generation at 12:15 PM");
+        System.out.println("Running TEMP slot generation at 10:00 PM");
         service.generateSlotsForTomorrow();
     }
 }

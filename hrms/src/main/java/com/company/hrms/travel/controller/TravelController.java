@@ -79,4 +79,27 @@ public class TravelController {
         return travelService.getTravelDocuments(travelId, user.getEmployeeId());
     }
 
+    @PreAuthorize("hasRole('HR')")
+    @DeleteMapping("/{travelId}")
+    public void deleteTravel(@PathVariable Integer travelId, @AuthenticationPrincipal CustomUserDetails user){
+        travelService.deleteTravel(travelId, user.getEmployeeId());
+    }
+
+
+    @PreAuthorize("hasRole('HR')")
+    @PutMapping("/{travelId}")
+    public TravelResponse updateTravel(
+            @PathVariable Integer travelId,
+            @RequestBody UpdateTravelRequest request,
+            @AuthenticationPrincipal CustomUserDetails user
+    ){
+       return travelService.updateTravel(travelId, request, user.getEmployeeId());
+    }
+
+    @GetMapping("/travel/{travelId}")
+    public TravelResponse travelDetails(@PathVariable Integer travelId, @AuthenticationPrincipal CustomUserDetails user){
+        return travelService.travelDetails(travelId, user.getEmployeeId());
+    }
+
+
 }

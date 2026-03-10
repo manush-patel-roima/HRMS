@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import GameService from "../../services/games/gameService";
+import GameService from "../../../services/games/gameService";
 import { useNavigate } from "react-router-dom";
-import { showWarningToast } from "../../utils/toastUtils";
+import { showWarningToast } from "../../../utils/toastUtils";
 
 const GameConfig = () => {
 
@@ -99,16 +99,20 @@ const GameConfig = () => {
   return (
     <div className="max-w-xl mx-auto bg-white p-6 rounded shadow h-screen">
 
-      <button
-        onClick={() => navigate("/hr/slot-monitor")}
-        className="bg-blue-600 text-white px-4 py-2 rounded mb-4 cursor-pointer"
-      >
-        Slot Monitoring
-      </button>
+      <div className="flex justify-between items-center">
 
-      <h2 className="text-xl font-bold mb-6">
-        Game Configuration
-      </h2>
+        <h2 className="text-xl text-2xl text-slate-700 font-bold mb-6">
+          Game Configuration
+        </h2>
+
+        <button
+          onClick={() => navigate("/hr/slot-monitor")}
+          className="bg-blue-600 font-medium text-white px-4 py-2 rounded mb-4 cursor-pointer animation duration-500 ease-in-out hover:shadow-xl hover:scale-100 hover:-translate-y-0.5 hover:-translate-x-0.5"
+        >
+          Slot Monitoring
+        </button>
+      </div>
+      
 
      
       <div className="mb-4">
@@ -209,12 +213,12 @@ const GameConfig = () => {
       <button
         onClick={saveConfig}
         disabled={loading}
-        className="bg-blue-600 text-white px-4 py-2 rounded w-full disabled:bg-gray-400"
+        className="bg-blue-600 text-white px-4 py-2 rounded font-medium w-full disabled:bg-gray-400 cursor-pointer animation duration-500 ease-in-out hover:shadow-xl hover:scale-100 hover:-translate-y-0.5"
       >
         {loading ? "Saving..." : "Save Configuration"}
       </button>
 
-      <p className="text-sm text-gray-500 mt-4">
+      <p className="text-sm text-gray-500 mt-2">
         Note: Slots will be generated automatically every day at 10PM for the next day.
       </p>
 

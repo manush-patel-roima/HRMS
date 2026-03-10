@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import JobService from "../../services/jobs/jobService";
+import JobService from "../../../services/jobs/jobService";
 
 const JobsManagement = () => {
 
@@ -39,19 +39,19 @@ const JobsManagement = () => {
 
   return (
     <div>
-      <div className="flex justify-between mb-4">
-        <h2 className="text-xl font-bold">Jobs Management</h2>
+      <div className="flex justify-between mb-10">
+        <h2 className="text-2xl text-slate-700 font-bold">Jobs Management</h2>
 
         <button
           onClick={() => navigate("/hr/jobs/new")}
-          className="bg-green-600 text-white px-4 py-2 ml-90 rounded"
+          className="bg-green-600 text-white cursor-pointer font-medium p-2 ml-100 rounded animation duration-500 ease-in-out hover:shadow-xl hover:scale-100 hover:-translate-y-0.5 hover:-translate-x-0.5"
         >
           Create Job
         </button>
 
         <button
-          onClick={() => navigate("/hr/referralslist")}
-          className="bg-green-600 text-white px-4 py-2 rounded"
+          onClick={() => navigate("/hr/jobs/referralslist")}
+          className="bg-green-600 text-white cursor-pointer font-medium p-2 rounded animation duration-500 ease-in-out hover:shadow-xl hover:scale-100 hover:-translate-y-0.5 hover:-translate-x-0.5"
         >
           Referrals List
         </button>        
@@ -59,16 +59,16 @@ const JobsManagement = () => {
 
       <div className="grid grid-cols-3 gap-4">
         {jobs.map(job => (
-          <div key={job.jobId} className="bg-white p-4 rounded shadow">
+          <div key={job.jobId} className="bg-white p-4 rounded shadow animation duration-500 ease-in-out hover:shadow-xl hover:scale-100 hover:-translate-y-0.5 hover:-translate-x-0.5">
 
-            <h3 className="font-semibold">{job.title}</h3>
-            <p className="text-sm text-gray-600 mb-3">
+            <h3 className="text-lg font-semibold">{job.title}</h3>
+            <p className="text-md font-normal text-gray-600 mb-3">
               {job.description}
             </p>
 
             <button
               onClick={() => handleDeactivate(job.jobId)}
-              className="bg-red-600 text-white px-3 py-1 rounded text-sm"
+              className=" cursor-pointer bg-red-600 text-white px-3 py-1 rounded text-sm animation duration-500 ease-in-out hover:shadow-xl hover:scale-100 hover:-translate-y-0.5 "
             >
               Deactivate
             </button>

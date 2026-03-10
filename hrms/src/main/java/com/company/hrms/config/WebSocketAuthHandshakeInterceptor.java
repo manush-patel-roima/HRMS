@@ -33,7 +33,6 @@ public class WebSocketAuthHandshakeInterceptor implements HandshakeInterceptor {
         }
 
         if(token == null){
-            // try query param
             String query = request.getURI().getQuery();
             if(query != null && query.contains("token=")){
                 for(String q : query.split("&")){

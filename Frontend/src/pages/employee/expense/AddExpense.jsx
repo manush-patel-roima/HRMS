@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ExpenseService from "../../services/expense/expenseService";
-import { showWarningToast } from "../../utils/toastUtils";
+import ExpenseService from "../../../services/expense/expenseService";
+import { showWarningToast } from "../../../utils/toastUtils";
+import Select from "react-select";
 
 const AddExpense = () => {
 
@@ -48,7 +49,7 @@ const AddExpense = () => {
     }
 
     const formData = new FormData();
-    formData.append("travelId", travelId);
+    formData.append("travelId", travelId.value);
     formData.append("category", category);
     formData.append("amount", amount.toString());
     formData.append("expenseDate", expenseDate);
@@ -70,40 +71,38 @@ const AddExpense = () => {
 
   return (
     <div className="bg-white p-6 rounded shadow max-w-lg">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl text-slate-700 font-bold mb-4">Add Expense</h2>
+        <div className="text-white font-medium bg-blue-600 rounded border w-35 py-2 px-1 mb-6 cursor-pointer animation duration-500 ease-in-out hover:shadow-xl hover:scale-100 hover:-translate-y-0.5 hover:-translate-x-0.5" onClick={()=>navigate("/expenses")}>Back to Expenses</div>
+      </div>
 
-      <div className="text-blue-600 underline mb-6 cursor-pointer" onClick={()=>navigate("/expenses")}>Back to Expenses</div>
-
-      <h2 className="text-xl font-bold mb-4">Add Expense</h2>
-      
-      <select
+      <Select
+        options={assignedTravels.map(travel => ({
+          value: travel.travelId,
+          label: travel.title
+        }))}
         value={travelId}
-        className="border p-2 w-full mb-2"
-        onChange={e => setTravelId(e.target.value)}
-      >
-        <option value="">Select Travel</option>
-        {assignedTravels.map(travel => (
-          <option key={travel.travelId} value={travel.travelId}>
-            {travel.title}
-          </option>
-        ))}
-      </select>
+        onChange={setTravelId}
+        className="border rounded w-full mb-2"
+        placeholder="Select Travel"
+      />
 
       <input
-        className="border p-2 w-full mb-2"
+        className="border rounded p-2 w-full mb-2"
         placeholder="Category"
         onChange={e => setCategory(e.target.value)}
       />
 
       <input
         type="number"
-        className="border p-2 w-full mb-2"
+        className="border rounded p-2 w-full mb-2"
         placeholder="Amount"
         onChange={e => setAmount(parseFloat(e.target.value))}
       />
 
       <input
         type="date"
-        className="border p-2 w-full mb-2"
+        className="border rounded p-2 w-full mb-2"
         onChange={e => setExpenseDate(e.target.value)}
       />
 
@@ -116,7 +115,7 @@ const AddExpense = () => {
 
       <button
         onClick={handleSubmit}
-        className="bg-green-600 text-white px-4 py-2 rounded"
+        className=" cursor-pointer bg-green-600 font-medium text-white p-2 rounded animation duration-500 ease-in-out hover:shadow-xl hover:scale-100 hover:-translate-y-0.5 hover:-translate-x-0.5"
       >
         Save as Draft
       </button>

@@ -24,8 +24,8 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-700">
-      <div className="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-900 to-blue-100">
+      <div className="bg-blue-200 rounded-xl p-8 w-full max-w-md animation duration-500 ease-in-out transform hover:shadow-2xl hover:scale-100 hover:-translate-y-0.5 hover:translate-x-0.5 ">
         <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
           HRMS Login
         </h2>
@@ -54,7 +54,7 @@ const Login = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded font-semibold transition disabled:bg-gray-400"
+            className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded font-semibold transition disabled:bg-gray-400"
           >
             {loading ? 'Logging in...' : 'Login'}
           </button>

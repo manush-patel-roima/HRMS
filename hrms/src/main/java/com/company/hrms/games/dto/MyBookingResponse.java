@@ -1,6 +1,7 @@
 package com.company.hrms.games.dto;
 
 import com.company.hrms.games.entity.BookingStatus;
+import com.company.hrms.games.entity.SlotStatus;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -17,6 +18,7 @@ public class MyBookingResponse {
     private LocalDate date;
     private LocalTime startTime;
     private LocalTime endTime;
+    private SlotStatus slotStatus;
     private List<String> participants;
     private BookingStatus status;
 }

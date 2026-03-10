@@ -36,13 +36,17 @@ const Sidebar = () => {
   if (role === "MANAGER") menu.push(...manager);
   if (role === "HR") menu.push(...hr);
 
+  const setActiveClass = ({ isActive }) => (isActive ? 'bg-white text-slate-700' : ' hover:bg-teal-300 hover:text-slate-700');
+
   return (
-    <div className="w-64 bg-slate-900 text-white p-4">
+    <div className="w-64 bg-gradient-to-b from-sky-900 to-sky-100 text-white font-bold tracking-wider text-lg p-4">
       {menu.map(m => (
         <NavLink
           key={m.path}
           to={m.path}
-          className="block px-3 py-2 rounded hover:bg-slate-700"
+          className={({ isActive }) => 
+            `block px-3 py-2 m-1 rounded ${setActiveClass({ isActive })}`
+          }
         >
           {m.label}
         </NavLink>

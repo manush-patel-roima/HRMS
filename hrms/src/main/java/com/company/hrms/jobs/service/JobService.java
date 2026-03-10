@@ -131,6 +131,10 @@ public class JobService {
             throw new ValidationException("Cannot refer for inactive job");
         }
 
+        if(referralRepo.existsByJobJobIdAndFriendEmail(request.getJobId(), request.getFriendEmail())){
+            throw new ValidationException("You have already referred this friend for this job");
+        }
+
         validateCV(cvFile);
 
         Referral referral = new Referral();

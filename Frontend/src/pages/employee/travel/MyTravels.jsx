@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import TravelService from "../../services/travel/travelService";
-import TravelCard from "../../components/TravelCard";
+import TravelService from "../../../services/travel/travelService";
+import TravelCard from "../../../components/TravelCard";
 
 const MyTravels = () => {
   const [travels, setTravels] = useState([]);
@@ -24,7 +24,7 @@ const MyTravels = () => {
 
   return (
     <div>
-      <h2 className="text-xl font-bold mb-4">My Travels</h2>
+      <h2 className="text-2xl text-slate-700 font-bold mb-4">My Travels</h2>
       <div className="grid grid-cols-3 gap-4">
         {travels.map(t => (
           <TravelCard key={t.travelId} travel={t} />

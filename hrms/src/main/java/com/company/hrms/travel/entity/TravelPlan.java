@@ -28,8 +28,10 @@ public class TravelPlan {
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @OneToMany(mappedBy = "travelPlan", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "travelPlan", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TravelEmployee> employees;
 
+    @OneToMany(mappedBy = "travelPlan" , cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TravelDocument> documents;
 
 }

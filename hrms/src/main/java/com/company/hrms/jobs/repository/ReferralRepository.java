@@ -1,5 +1,7 @@
 package com.company.hrms.jobs.repository;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import com.company.hrms.jobs.entity.Referral;
 import org.springframework.data.jpa.repository.Query;
@@ -22,4 +24,6 @@ public interface ReferralRepository extends JpaRepository<Referral, Integer> {
           WHERE r.job.isActive = true
     """)
     List<Referral> findAllActiveReferrals();
+
+    boolean existsByJobJobIdAndFriendEmail(@NotNull Integer jobId, @Email String friendEmail);
 }

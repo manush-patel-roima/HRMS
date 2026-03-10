@@ -26,7 +26,7 @@ const addComment = (postId, text) => {
 
 const toggleLike = (postId) => {
   return axios.post(`${API_BASE}/posts/${postId}/like`).then(r => {
-    showSuccessToast('Like toggled successfully!');
+    showSuccessToast('Liked toggled successfully !');
     return r.data;
   });
 }

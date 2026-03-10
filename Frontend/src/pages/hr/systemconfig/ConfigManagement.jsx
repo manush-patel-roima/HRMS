@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import ConfigService from "../../services/config/configService";
+import ConfigService from "../../../services/config/configService";
 
 const ConfigManagement = () => {
 
@@ -51,11 +51,11 @@ const ConfigManagement = () => {
   return (
     <div>
       <div className="flex justify-between mb-4">
-        <h2 className="text-xl font-bold">System Configurations</h2>
+        <h2 className="text-2xl text-slate-700 font-bold">System Configurations</h2>
 
         <button
           onClick={() => setShowAdd(true)}
-          className="bg-green-600 text-white px-4 py-2 rounded"
+          className="bg-green-600 text-white px-4 py-2 rounded cursor-pointer font-medium animation duration-500 ease-in-out hover:shadow-xl hover:scale-100 hover:-translate-y-0.5 hover:-translate-x-0.5"
         >
           Add Config
         </button>
@@ -68,7 +68,7 @@ const ConfigManagement = () => {
         />
       )}
 
-      <div className="bg-white p-4 rounded shadow">
+      <div className="bg-white p-4 rounded shadow ">
         {configs.map(config => (
           <ConfigRow
             key={config.configKey}
@@ -86,7 +86,7 @@ const ConfigRow = ({ config, onUpdate }) => {
   const [value, setValue] = useState(config.configValue);
 
   return (
-    <div className="py-3 flex justify-between items-center">
+    <div className="p-2 flex justify-between items-center animation duration-500 ease-in-out hover:shadow-xl hover:scale-100 hover:-translate-y-0.5 hover:-translate-x-0.5">
 
       <div>
         <p className="font-semibold">{config.configKey}</p>
@@ -101,7 +101,7 @@ const ConfigRow = ({ config, onUpdate }) => {
 
         <button
           onClick={() => onUpdate(config.configKey, value)}
-          className="bg-blue-600 text-white px-3 py-1 rounded text-sm"
+          className="bg-blue-600 text-white px-3 py-1 rounded cursor-pointer text-sm font-medium animation duration-500 ease-in-out hover:shadow-xl hover:scale-100 hover:-translate-y-0.5 "
         >
           Update
         </button>
@@ -118,7 +118,7 @@ const AddConfigForm = ({ onCancel, onSave }) => {
   return (
     <div className="bg-gray-100 p-4 rounded mb-4">
 
-      <h3 className="font-semibold mb-2">Add New Config</h3>
+      <h3 className="text-xl font-semibold mb-2">Add New Config</h3>
 
       <input
         className="border rounded p-2 w-full mb-2"
@@ -135,14 +135,14 @@ const AddConfigForm = ({ onCancel, onSave }) => {
       <div className="flex gap-2">
         <button
           onClick={() => onSave(key, value)}
-          className="bg-blue-600 text-white px-4 py-1 rounded"
+          className="bg-blue-600 text-white px-4 py-1 font-medium cursor-pointer rounded animation duration-500 ease-in-out hover:shadow-xl hover:scale-100 hover:-translate-y-0.5 "
         >
           Save
         </button>
 
         <button
           onClick={onCancel}
-          className="bg-gray-400 text-white px-4 py-1 rounded"
+          className="bg-gray-400 text-white px-4 py-1 font-medium cursor-pointer rounded animation duration-500 ease-in-out hover:shadow-xl hover:scale-100 hover:-translate-y-0.5 "
         >
           Cancel
         </button>

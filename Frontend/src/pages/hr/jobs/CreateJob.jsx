@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import JobService from "../../services/jobs/jobService";
-import { showWarningToast } from "../../utils/toastUtils";
+import JobService from "../../../services/jobs/jobService";
+import { showWarningToast } from "../../../utils/toastUtils";
 
 const CreateJob = () => {
 
@@ -67,30 +67,31 @@ const CreateJob = () => {
   return (
     <div className="bg-white p-6 rounded shadow max-w-lg">
 
-      <div className="text-blue-600 underline mb-6" onClick={()=>navigate("/hr/jobs")}>Back to Jobs</div>
-
-      <h2 className="text-xl font-bold mb-4">Create Job</h2>
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl text-slate-700 font-bold mb-4">Create Job</h2>
+        <div className="text-white font-medium bg-blue-600 rounded border w-30 pl-3 py-2 mb-6 cursor-pointer animation duration-500 ease-in-out hover:shadow-xl hover:scale-100 hover:-translate-y-0.5 hover:-translate-x-0.5" onClick={()=>navigate("/hr/jobs")}>Back to Jobs</div>
+      </div>
 
       <input
-        className="border p-2 w-full mb-2"
+        className="border rounded p-2 w-full mb-2"
         placeholder="Title"
         onChange={e => setTitle(e.target.value)}
       />
 
       <textarea
-        className="border p-2 w-full mb-2"
+        className="border rounded p-2 w-full mb-2"
         placeholder="Description"
         onChange={e => setDescription(e.target.value)}
       />
 
       <input
-        className="border p-2 w-full mb-2"
+        className="border rounded p-2 w-full mb-2"
         placeholder="HR Email"
         onChange={e => setHrEmail(e.target.value)}
       />
 
       <input
-        className="border p-2 w-full mb-2"
+        className="border rounded p-2 w-full mb-2"
         placeholder="Reviewer Emails (comma-separated)"
         onChange={e => setReviewers(e.target.value)}
       />
@@ -105,7 +106,7 @@ const CreateJob = () => {
       <button
         disabled={loading}
         onClick={handleSubmit}
-        className="bg-blue-600 text-white px-4 py-2 rounded"
+        className="bg-blue-600 text-white font-medium px-4 py-2 rounded cursor-pointer animation duration-500 ease-in-out hover:shadow-xl hover:scale-100 hover:-translate-y-0.5"
       >
         {loading ? "Saving..." : "Save"}
       </button>

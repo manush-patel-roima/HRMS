@@ -79,6 +79,8 @@ public class GameService {
                 totalPlayers > config.getMaxPlayers())
             throw new ValidationException("Invalid participant count");
 
+        List<Boolean> allFirstTime = new ArrayList<>();
+
         PlayerGameStats stats =
                 statsRepo.findByEmployee_EmployeeIdAndGame_GameIdAndPlayDate(
                                 requestedBy.getEmployeeId(),
@@ -93,14 +95,36 @@ public class GameService {
                             return statsRepo.save(s);
                         });
 
-        boolean firstTimeToday = stats.getPlayedCount() == 0;
+        boolean firstTimeTodayOfRequestor = stats.getPlayedCount() == 0;
+        allFirstTime.add(firstTimeTodayOfRequestor);
+
+
+        for(Employee e : participants){
+            PlayerGameStats participantStats =
+                    statsRepo.findByEmployee_EmployeeIdAndGame_GameIdAndPlayDate(
+                                    e.getEmployeeId(),
+                                    slot.getGame().getGameId(),
+                                    slot.getSlotDate())
+                            .orElseGet(() -> {
+                                PlayerGameStats s = new PlayerGameStats();
+                                s.setEmployee(e);
+                                s.setGame(slot.getGame());
+                                s.setPlayDate(slot.getSlotDate());
+                                s.setPlayedCount(0);
+                                return statsRepo.save(s);
+                            });
+
+            boolean firstTimeTodayOfParticipant = participantStats.getPlayedCount() == 0;
+            allFirstTime.add(firstTimeTodayOfParticipant);
+        }
 
         BookingGroup group = new BookingGroup();
         group.setSlot(slot);
         group.setRequestedBy(requestedBy);
         group.setRequestedAt(LocalDateTime.now());
 
-        if (firstTimeToday) {
+        boolean allTrue = allFirstTime.stream().allMatch(Boolean::booleanValue);
+        if (allTrue) {
             group.setBookingStatus(BookingStatus.BOOKED);
         } else {
             group.setBookingStatus(BookingStatus.PENDING);
@@ -124,7 +148,7 @@ public class GameService {
 
         participantRepo.saveAll(all);
 
-        if (!firstTimeToday) {
+        if (!allTrue) {
             BookingQueue queue = new BookingQueue();
             queue.setBookingGroup(group);
             queue.setAddedAt(LocalDateTime.now());
@@ -296,6 +320,7 @@ public class GameService {
                         group.getSlot().getSlotDate(),
                         group.getSlot().getStartTime(),
                         group.getSlot().getEndTime(),
+                        group.getSlot().getStatus(),
                         names,
                         group.getBookingStatus()
                 ));
