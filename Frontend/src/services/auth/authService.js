@@ -63,6 +63,10 @@ class AuthService {
             roleName: role
         };
     }
+
+    static getMyDetails(){
+        return axiosInstance.get("/api/employees/me");
+    }
 }
 
 export default AuthService;
